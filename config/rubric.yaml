@@ -1,0 +1,39 @@
+# Scoring rubric (SPEC 8.4). scripts/validate.py reads every value here.
+# Total = sum of weight x score / max_score, out of 100.
+
+max_score: 5
+
+weights:
+  lens_fit: 25
+  rahul_edge: 20
+  build_size: 15
+  demo: 15
+  verifiable: 15
+  distribution: 10
+
+shortlist:
+  threshold: 70        # total needed to be shortlisted
+  max_ideas: 3         # the digest shows at most this many, highest first
+
+# The lens_fit score is fixed by the lens. "neither" scores 0 and the idea is dropped.
+lens:
+  gaming_x_ai_pm: 5    # gaming crossed with AI product work
+  gaming_only: 4       # gaming or LiveOps only
+  ai_pm_only: 2        # AI product management only
+  neither: 0
+
+dropped_lenses: [neither]
+
+# Highest total each lens can reach. They follow from the weights and the lens
+# scores above; tests/test_validate.py checks they agree.
+lens_caps:
+  gaming_x_ai_pm: 100
+  gaming_only: 95
+  ai_pm_only: 85
+
+# Build size by weekends needed: one scores 5, two 4, three 2, more 0.
+build_size_scores: [0, 2, 4, 5]
+
+brainstorm:
+  max_per_brief: 2
+  max_per_week: 15

@@ -1,0 +1,41 @@
+{
+  "week": "2026-W42",
+  "briefs": [
+    {
+      "source": "github",
+      "id": "acme/agent-1",
+      "url": "https://github.com/acme/agent-1",
+      "title": "agent-1",
+      "problem": "Teams lose hours triaging the same production alerts by hand every week.",
+      "user": "On-call engineers at small software teams",
+      "mechanism": "An agent watches a stream of events and files structured tickets with a suggested owner.",
+      "why_now": "The README shows 1,000 stars in its first week and a launch post on the front page.",
+      "evidence": ["https://github.com/acme/agent-1", "https://github.com/acme/agent-1#readme"]
+    },
+    {
+      "source": "show_hn",
+      "id": "9003",
+      "url": "https://news.ycombinator.com/item?id=9003",
+      "title": "Show HN: A to-do list \u2013 plans your week",
+      "problem": "People write to-do lists but never turn them into a realistic plan for the week.",
+      "user": "Knowledge workers who plan their own week",
+      "mechanism": "A planner takes an unordered list of tasks with rough sizes and packs them into calendar slots.",
+      "why_now": "The Show HN post reached 100 points in two days with comments asking for team support.",
+      "evidence": ["https://news.ycombinator.com/item?id=9003", "https://example.com/9003"]
+    },
+    {
+      "source": "hf_space",
+      "id": "org/level-designer",
+      "url": "https://huggingface.co/spaces/org/level-designer",
+      "title": "Level Designer",
+      "problem": "Blocking out a first playable level takes a designer most of a day.",
+      "user": "Indie game designers",
+      "mechanism": "A model turns a short text description into a tile grid that an engine can import.",
+      "why_now": "The space is trending with 100 likes this week after a model release.",
+      "evidence": ["https://huggingface.co/spaces/org/level-designer"]
+    }
+  ],
+  "skipped": [
+    {"id": "org/face-swap-demo", "reason": "Matches the face-swap exclusion added to sources.yaml after this scan."}
+  ]
+}

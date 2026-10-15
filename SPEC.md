@@ -68,7 +68,8 @@ idea-radar/
 ├── scripts/
 │   ├── scan.py                        runs collectors, writes data/scans/<week>.json
 │   ├── select.py                      velocity, exclusions, quotas, diversity
-│   └── validate.py                    validates LLM output files against schemas
+│   ├── validate.py                    validates LLM output files against schemas
+│   └── render.py                      validated JSON to Drive files and sheet rows
 ├── prompts/
 │   ├── brief.md
 │   ├── brainstorm.md
@@ -88,6 +89,7 @@ idea-radar/
 ├── data/
 │   ├── scans/                         one JSON file per ISO week, committed
 │   └── stars.csv                      weekly star snapshots for velocity
+├── runs/                              weekly task working files, gitignored
 ├── tests/
 └── .github/workflows/
     ├── scan.yml                       weekly, Monday 01:30 UTC
@@ -175,7 +177,7 @@ Tests must cover velocity maths (both flags), every exclusion rule, quota fill, 
 
 Runs Monday 03:15 UTC (08:45 IST), after the scan workflow. The full task prompt is in Appendix A.
 
-All outputs are JSON first, validated with `python scripts/validate.py`, then rendered to Drive. On a validation failure the task fixes the file and retries once; a second failure is reported, not written.
+All outputs are JSON first, written to `runs/{YYYY}-W{ww}/` (`briefs.json`, `ideas.json`, `scores.json`), validated with `python scripts/validate.py runs/{YYYY}-W{ww}`, then rendered with `python scripts/render.py runs/{YYYY}-W{ww}`, which refuses to write anything that fails validation. The weekly task copies the rendered files to Drive. On a validation failure the task fixes the file and retries once; a second failure is reported, not written.
 
 ### 8.1 Brief (`prompts/brief.md`)
 
@@ -357,13 +359,15 @@ Weekly idea-radar run. Follow SPEC.md sections 8 and 12 exactly.
 4. Brainstorm per prompts/brainstorm.md.
 5. Run the originality gate per prompts/originality.md.
 6. Score per prompts/score.md and config/rubric.yaml.
-7. Validate every JSON output with python scripts/validate.py. Fix and
-   retry once on failure. Never write unvalidated output to Drive.
-8. In Google Drive, Build Lab/:
-   - add this week's tab to 01_Scan/repo-scan
-   - write briefs and _digest.md to 02_Briefs/{YYYY}-W{ww}/
-   - append ideas to 03_Backlog/idea-backlog with status new or
-     shortlisted; killed ideas go to 99_Archive with the reason
+7. Validate every JSON output with python scripts/validate.py
+   runs/{YYYY}-W{ww}. Fix and retry once on failure. Never write
+   unvalidated output to Drive. Then run python scripts/render.py
+   runs/{YYYY}-W{ww}.
+8. In Google Drive, Build Lab/, from runs/{YYYY}-W{ww}/drive/:
+   - add this week's tab to 01_Scan/repo-scan (scan_rows.json)
+   - write briefs/*.md and _digest.md to 02_Briefs/{YYYY}-W{ww}/
+   - append backlog_rows.json to 03_Backlog/idea-backlog (status new
+     or shortlisted); archive.md goes to 99_Archive with the reasons
 9. Tracking: for every shipped row whose ship date was 7 or 30 days ago,
    record stars into 06_Shipped/{slug}/results.md and the sheet.
 10. Finish with a summary: the shortlisted ideas with totals, their
