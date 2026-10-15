@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stonedhawk/idea-radar/schemas/scan_item.json",
+  "title": "Scan item",
+  "description": "One normalised item from any source (SPEC 6.4). primary_topic, stars, fork, archived and link are source-specific extras.",
+  "type": "object",
+  "required": [
+    "source",
+    "id",
+    "url",
+    "title",
+    "description",
+    "topics",
+    "language",
+    "license",
+    "traction",
+    "traction_kind",
+    "created_at",
+    "fetched_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "source": {"enum": ["github", "show_hn", "hf_space"]},
+    "id": {"type": "string", "minLength": 1},
+    "url": {"type": "string", "pattern": "^https://"},
+    "title": {"type": "string"},
+    "description": {"type": "string"},
+    "topics": {"type": "array", "items": {"type": "string"}},
+    "language": {"type": ["string", "null"]},
+    "license": {"type": ["string", "null"]},
+    "traction": {"type": "number"},
+    "traction_kind": {
+      "enum": ["velocity_7d_measured", "velocity_7d_estimated", "hn_points", "hf_trending"]
+    },
+    "created_at": {"type": "string"},
+    "fetched_at": {"type": "string"},
+    "primary_topic": {
+      "type": ["string", "null"],
+      "description": "GitHub only: the configured topic whose query found the repo. Used by the diversity cap."
+    },
+    "stars": {"type": "integer", "minimum": 0, "description": "GitHub only: stars at fetch time."},
+    "fork": {"type": "boolean", "description": "GitHub only."},
+    "archived": {"type": "boolean", "description": "GitHub only."},
+    "link": {"type": ["string", "null"], "description": "Show HN only: the URL the post links to."}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"source": {"const": "github"}}},
+      "then": {
+        "required": ["primary_topic", "stars", "fork", "archived"],
+        "properties": {"traction_kind": {"enum": ["velocity_7d_measured", "velocity_7d_estimated"]}}
+      }
+    },
+    {
+      "if": {"properties": {"source": {"const": "show_hn"}}},
+      "then": {"properties": {"traction_kind": {"const": "hn_points"}}}
+    },
+    {
+      "if": {"properties": {"source": {"const": "hf_space"}}},
+      "then": {"properties": {"traction_kind": {"const": "hf_trending"}}}
+    }
+  ]
+}
