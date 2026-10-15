@@ -16,7 +16,7 @@ Ship means all of these are true (SPEC 12):
 - [ ] Website field set to the GitHub Pages URL, if there is a demo page
 - [ ] Portfolio card PR merged in `stonedhawk/rahul-m-shah-portfolio`, `content/tools/`, with `inspiredBy` crediting {{source_pattern}}
 - [ ] LinkedIn post drafted with the `my-writing-style` skill
-- [ ] Backlog row: `status = shipped`, `shipped_on` and `repo_url` filled in
+- [ ] Backlog row: `status = shipped`, `repo_url` filled in, `shipped_on` as YYYY-MM-DD (`scripts/track.py` reads it)
 
 ## Channels
 

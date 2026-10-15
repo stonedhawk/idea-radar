@@ -19,12 +19,12 @@ Read everything before writing anything:
 | Input | Where |
 |---|---|
 | The backlog row | The sheet: `idea_id`, `title`, `one_liner`, `target_user`, `source_urls`, `originality`, `differentiator`, `evidence_urls`, `total`, `picked_on`, `notes` |
-| The full idea | `runs/{week}/ideas.json` if it is on this machine, otherwise `02_Briefs/{week}/_digest.md` in Drive: `smallest_version`, `demo`, `verifiable_by`, `rahul_edge` |
-| The source briefs | `runs/{week}/briefs.json` or `02_Briefs/{week}/{brief}.md`: the `mechanism` of each source, which is the pattern to credit |
-| The score reasons | `runs/{week}/scores.json` or the score table in the digest; the `distribution` reason names the channel |
+| The full idea | `smallest_version`, `demo`, `verifiable_by` and `rahul_edge`, from `runs/{week}/ideas.json` if that run's files are on this machine, otherwise from the idea's entry under "Shortlist" in `02_Briefs/{week}/_digest.md` in Drive |
+| The score reasons | `runs/{week}/scores.json`, otherwise the score table under the idea's digest entry. The `distribution` reason names the channel |
+| The source briefs | `runs/{week}/briefs.json`, otherwise the "Briefs" list in the digest or the brief files in `02_Briefs/{week}/` (one `.md` per source). Each source's `mechanism` is the pattern to credit |
 | The sources | Every URL in `source_urls` and `evidence_urls`. Open the closest competitor so the non-goals and the differentiator are concrete |
 
-If `smallest_version`, `demo` or `verifiable_by` cannot be found (the seed row has none), ask Rahul for them in one message before writing. Do not invent them.
+The weekly task runs in the cloud, so `runs/` is usually not on this machine, and the digest only has the full idea and score table for shortlisted ideas. For a row with status `new` before it was picked, or the seed row, `smallest_version`, `demo`, `verifiable_by` and the score reasons are not in Drive. Ask Rahul for the three idea fields in one message before writing, and leave `{{distribution}}` as the channel he names. Do not invent them.
 
 ## 3. Fill the templates
 
