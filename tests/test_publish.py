@@ -159,3 +159,11 @@ def test_config_rejects_an_unknown_action(tmp_path):
     bad.write_text("root: Build Lab\noutputs:\n  - {source: a.md, action: email, dest: x}\n")
     with pytest.raises(ValueError, match="each action one of"):
         load_config(bad)
+
+
+def test_plan_reports_an_empty_scan_row_instead_of_crashing(rendered):
+    path = rendered / "scan_rows.json"
+    rows = json.loads(path.read_text())
+    path.write_text(json.dumps(rows + [[]]))
+    _, errors = make_plan(rendered)
+    assert errors == [f"scan_rows.json/{len(rows)}: has the wrong number of cells"]

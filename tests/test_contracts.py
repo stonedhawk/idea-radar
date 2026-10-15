@@ -183,3 +183,8 @@ def test_validate_refuses_a_selected_file_that_breaks_the_contract(tmp_path, sel
     (run / "selected.json").write_text(json.dumps(selected))
     assert validate_main([str(run), "--selected", str(run / "selected.json")]) == 1
     assert "does not meet schemas/selected.json" in capsys.readouterr().err
+
+
+def test_select_says_to_run_the_scan_first(config, tmp_path):
+    with pytest.raises(ContractError, match="missing; run scripts/scan.py first"):
+        select_step.run(config, week=WEEK, data_dir=tmp_path, has_readme=lambda name: True, now=NOW)

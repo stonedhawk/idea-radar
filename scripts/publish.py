@@ -71,7 +71,7 @@ def check_rows(name: str, rows: list, week: str, data: dict, rubric: dict) -> li
         if not rows or rows[0] != SCAN_COLUMNS:
             return [f"{name}: first row must be the header {SCAN_COLUMNS}"]
         short = [i for i, r in enumerate(rows[1:], 1) if len(r) != len(SCAN_COLUMNS)]
-        weeks = {r[0] for r in rows[1:]}
+        weeks = {r[0] for r in rows[1:] if r}
         errors = [f"{name}/{i}: has the wrong number of cells" for i in short]
         if weeks - {week}:
             errors.append(f"{name}: rows are for {sorted(weeks)}, not {week}")

@@ -183,6 +183,8 @@ def run(
     """
     scans_dir = data_dir / "scans"
     scan_path = scans_dir / f"{week}.json"
+    if not scan_path.exists():
+        raise ContractError([f"{scan_path}: missing; run scripts/scan.py first"])
     scan = load(scan_path, "scan")
     if scan["week"] != week:
         raise ContractError([f"{scan_path.name}/week: {scan['week']} is not {week}"])

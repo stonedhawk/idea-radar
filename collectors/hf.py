@@ -20,21 +20,28 @@ def build_url(cfg: dict) -> str:
     return f"{SPACES_URL}?{urlencode(params)}"
 
 
+def text(value) -> str | None:
+    """Card fields are free-form YAML, so a title can parse as a number or a list."""
+    if value is None or value == "":
+        return None
+    if isinstance(value, list):
+        return ", ".join(str(v) for v in value)
+    return str(value)
+
+
 def normalize(space: dict, fetched_at: str) -> dict:
-    card = space.get("cardData") or {}
-    license_value = card.get("license")
-    if isinstance(license_value, list):
-        license_value = ", ".join(str(v) for v in license_value)
+    card = space.get("cardData")
+    card = card if isinstance(card, dict) else {}
     return make_item(
         source="hf_space",
         id=space["id"],
         url=SPACE_PAGE.format(space["id"]),
-        title=card.get("title") or space["id"],
-        description=card.get("short_description") or "",
+        title=text(card.get("title")) or space["id"],
+        description=text(card.get("short_description")) or "",
         # Drop housekeeping tags such as "region:us".
-        topics=[t for t in space.get("tags") or [] if ":" not in t],
+        topics=[t for t in space.get("tags") or [] if isinstance(t, str) and ":" not in t],
         language=None,
-        license=license_value,
+        license=text(card.get("license")),
         traction=float(space.get("trendingScore") or 0),
         traction_kind="hf_trending",
         created_at=space.get("createdAt") or "",
