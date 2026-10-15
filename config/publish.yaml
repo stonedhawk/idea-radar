@@ -1,0 +1,36 @@
+# Where a week's rendered files go (SPEC 13). scripts/publish.py reads this.
+#
+# The layout is the same whichever agent runs the week. How it is written
+# depends on what the agent can reach:
+#   - an agent with Google Drive and Sheets tools (the Claude routine uses the
+#     Drive and Sheets connectors) follows the plan publish.py prints;
+#   - any other agent runs publish.py --local DIR, or sets
+#     IDEA_RADAR_PUBLISH_DIR, and gets the same tree as plain files.
+#
+# Paths are relative to the root folder. {week} is the ISO week, e.g. 2026-W42.
+# Drive folder and file ids are account-specific and stay out of the repo.
+
+root: Build Lab
+
+outputs:
+  - source: "briefs/*.md"
+    action: upload
+    dest: "02_Briefs/{week}/"
+  - source: _digest.md
+    action: upload
+    dest: "02_Briefs/{week}/_digest.md"
+  - source: archive.md
+    action: upload
+    dest: "99_Archive/{week}-archive.md"
+  - source: scan_rows.json
+    action: new_sheet_tab        # a new tab named {week} at index 0, rows from A1
+    dest: "01_Scan/repo-scan"
+    tab: "{week}"
+  - source: backlog_rows.json
+    action: append_rows          # appended under the existing header row
+    dest: "03_Backlog/idea-backlog"
+    tab: backlog
+
+# A destination that already holds this week (a brief, the digest, the scan
+# tab) means the week was published before. Stop and report instead of
+# writing duplicates. Rows are only ever appended.

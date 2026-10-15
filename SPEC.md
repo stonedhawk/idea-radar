@@ -49,17 +49,21 @@ Two runtimes, split by what each does well.
 
 Deterministic steps are Python scripts with tests. Judgment steps are versioned prompt files with JSON outputs validated against schemas. Nothing the LLM writes reaches Drive without passing validation.
 
+The judgment steps do not depend on one vendor. Any coding agent that follows `AGENTS.md` (Claude Code, Codex, Gemini in Antigravity) can run them; the weekly Claude task is the reference deployment. `AGENTS.md` holds the input and output contract of every step and lists the parts that are tied to Claude, with how to swap each one.
+
 ### 5.1 Repo layout
 
 ```
 idea-radar/
 ├── README.md
 ├── SPEC.md
-├── CLAUDE.md, AGENTS.md, GEMINI.md   one line each: "Read SPEC.md first."
+├── AGENTS.md                          agent instructions and step contracts, for every agent
+├── CLAUDE.md, GEMINI.md               shims that import AGENTS.md
 ├── LICENSE                            MIT, "Copyright (c) 2026 Rahul M Shah"
 ├── config/
 │   ├── sources.yaml                   topics, queries, quotas, exclusions
-│   └── rubric.yaml                    scoring weights and thresholds
+│   ├── rubric.yaml                    scoring weights and thresholds
+│   └── publish.yaml                   where rendered files go (section 13)
 ├── collectors/
 │   ├── common.py                      shared item model, HTTP with retry
 │   ├── github.py
@@ -68,8 +72,10 @@ idea-radar/
 ├── scripts/
 │   ├── scan.py                        runs collectors, writes data/scans/<week>.json
 │   ├── select.py                      velocity, exclusions, quotas, diversity
+│   ├── contracts.py                   checks scan and selected files against schemas
 │   ├── validate.py                    validates LLM output files against schemas
 │   ├── render.py                      validated JSON to Drive files and sheet rows
+│   ├── publish.py                     the publish plan, or a local copy of it
 │   └── track.py                       shipped rows due a 7-day or 30-day star check
 ├── prompts/
 │   ├── brief.md
@@ -78,6 +84,7 @@ idea-radar/
 │   ├── score.md
 │   └── spec.md
 ├── schemas/
+│   ├── scan.json, selected.json
 │   ├── scan_item.json
 │   ├── brief.json
 │   ├── idea.json
@@ -178,7 +185,7 @@ Tests must cover velocity maths (both flags), every exclusion rule, quota fill, 
 
 Runs Monday 03:15 UTC (08:45 IST), after the scan workflow. The full task prompt is in Appendix A.
 
-All outputs are JSON first, written to `runs/{YYYY}-W{ww}/` (`briefs.json`, `ideas.json`, `scores.json`), validated with `python scripts/validate.py runs/{YYYY}-W{ww}`, then rendered with `python scripts/render.py runs/{YYYY}-W{ww}`, which refuses to write anything that fails validation. The weekly task copies the rendered files to Drive. On a validation failure the task fixes the file and retries once; a second failure is reported, not written.
+All outputs are JSON first, written to `runs/{YYYY}-W{ww}/` (`briefs.json`, `ideas.json`, `scores.json`), validated with `python scripts/validate.py runs/{YYYY}-W{ww}`, then rendered with `python scripts/render.py runs/{YYYY}-W{ww}`, which refuses to write anything that fails validation. The weekly task copies the rendered files to Drive, following the plan `python scripts/publish.py runs/{YYYY}-W{ww}` prints from `config/publish.yaml`; an agent without Drive tools writes the same layout to a local folder with `--local`. On a validation failure the task fixes the file and retries once; a second failure is reported, not written.
 
 ### 8.1 Brief (`prompts/brief.md`)
 
@@ -348,6 +355,8 @@ Add as the first `shortlisted` row, sourced from this month's audit rather than 
 2. Whether briefs should also be published in the repo as a weekly public digest. Default: no, they stay in Drive.
 
 ## Appendix A: weekly Claude task prompt
+
+The reference prompt for the Claude routine. The live copy, with the Drive folder ids, is in the routine itself. Other agents follow the "Weekly run" section of `AGENTS.md` instead.
 
 ```
 Weekly idea-radar run. Follow SPEC.md sections 8 and 12 exactly.

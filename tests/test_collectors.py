@@ -7,6 +7,7 @@ import urllib.error
 from datetime import date
 from urllib.parse import parse_qs, urlparse
 
+import jsonschema
 import pytest
 
 from collectors import common, github, hf, hn
@@ -208,3 +209,19 @@ def test_make_item_rejects_unknown_source():
             language=None, license=None, traction=0, traction_kind="hn_points",
             created_at="", fetched_at="",
         )
+
+
+def test_hf_card_fields_that_are_not_text_still_make_a_valid_item(schema):
+    """Space cards are free-form YAML: a title can parse as a number, a license as a dict."""
+    space = {
+        "id": "org/odd-card",
+        "cardData": {"title": 2048, "short_description": ["a", "b"], "license": {"name": "custom"}},
+        "tags": ["gradio", 7, "region:us"],
+        "trendingScore": 3,
+        "createdAt": "2026-10-01T00:00:00.000Z",
+    }
+    item = hf.normalize(space, "2026-10-15T01:30:00Z")
+    jsonschema.Draft202012Validator(schema).validate(item)
+    assert (item["title"], item["description"], item["topics"]) == ("2048", "a, b", ["gradio"])
+    assert item["license"] == "{'name': 'custom'}"
+    assert hf.normalize({"id": "org/no-card", "cardData": None}, "2026-10-15T01:30:00Z")["title"] == "org/no-card"
