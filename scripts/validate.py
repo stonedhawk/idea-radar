@@ -5,8 +5,8 @@ Usage: python scripts/validate.py runs/2026-W42 [--selected PATH | --no-selected
 
 The run directory holds briefs.json, ideas.json and scores.json. --selected
 defaults to data/scans/<week>.selected.json and must exist unless
---no-selected is given. Every error is printed and the
-exit code is 1; on success the shortlist is printed and the exit code is 0.
+--no-selected is given, and must meet schemas/selected.json. Every error is
+printed and the exit code is 1; on success the shortlist is printed and the exit code is 0.
 """
 from __future__ import annotations
 
@@ -30,6 +30,9 @@ from pathlib import Path  # noqa: E402
 
 import yaml  # noqa: E402
 from jsonschema import Draft202012Validator  # noqa: E402
+
+from scripts.contracts import ContractError  # noqa: E402
+from scripts.contracts import load as load_contract  # noqa: E402
 
 ROOT = Path(_ROOT)
 SCHEMAS = ROOT / "schemas"
@@ -373,7 +376,10 @@ def resolve_selected(run_dir: Path, given: Path | None, skip: bool) -> tuple[dic
         return None, "cannot tell the week from briefs.json, so no selected file to check against"
     if not path.exists():
         return None, f"selected file {path} not found; pass --selected, or --no-selected to skip the check"
-    return json.loads(path.read_text()), None
+    try:
+        return load_contract(path, "selected"), None
+    except ContractError as exc:
+        return None, f"selected file {path} does not meet schemas/selected.json: " + "; ".join(exc.errors)
 
 
 def main(argv: list[str] | None = None) -> int:

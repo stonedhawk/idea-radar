@@ -5,6 +5,9 @@ Usage: GITHUB_TOKEN=... python scripts/select.py --week 2026-W42
 
 Reads data/scans/<week>.json and writes data/scans/<week>.selected.json.
 README checks hit the GitHub API, but only for repos about to be picked.
+The scan is checked against schemas/scan.json before it is read and the
+output against schemas/selected.json before it is written; on a failed
+check or request nothing is written and the exit code is 1.
 """
 from __future__ import annotations
 
@@ -30,6 +33,8 @@ from typing import Callable  # noqa: E402
 import yaml  # noqa: E402
 
 from collectors import github  # noqa: E402
+from collectors.common import FetchError  # noqa: E402
+from scripts.contracts import ContractError, load, require  # noqa: E402
 
 ROOT = Path(_ROOT)
 
@@ -163,6 +168,48 @@ def select_items(
     return selected, dict(sorted(skipped.items()))
 
 
+def run(
+    cfg: dict,
+    *,
+    week: str,
+    data_dir: Path,
+    has_readme: Callable[[str], bool],
+    now: datetime | None = None,
+) -> dict:
+    """Select from data/scans/<week>.json and write <week>.selected.json.
+
+    Raises ContractError, before writing anything, if the scan or the output
+    does not meet its schema.
+    """
+    scans_dir = data_dir / "scans"
+    scan_path = scans_dir / f"{week}.json"
+    if not scan_path.exists():
+        raise ContractError([f"{scan_path}: missing; run scripts/scan.py first"])
+    scan = load(scan_path, "scan")
+    if scan["week"] != week:
+        raise ContractError([f"{scan_path.name}/week: {scan['week']} is not {week}"])
+
+    selected, skipped = select_items(
+        scan["items"],
+        cfg,
+        recent=recently_selected(scans_dir, week, cfg["select"]["repeat_weeks"]),
+        has_readme=has_readme,
+    )
+    now = now or datetime.now(timezone.utc)
+    out = {
+        "week": week,
+        "generated_at": now.astimezone(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
+        "scan": scan_path.name,
+        "quotas": cfg["select"]["quotas"],
+        "skipped": skipped,
+        "items": selected,
+    }
+    out_path = scans_dir / f"{week}.selected.json"
+    require(out, "selected", out_path.name)
+    out_path.write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--week", required=True, help="ISO week, e.g. 2026-W42")
@@ -175,33 +222,18 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("set GITHUB_TOKEN; it is needed for README checks")
 
     cfg = yaml.safe_load(args.config.read_text())
-    scans_dir = args.data_dir / "scans"
-    scan_path = scans_dir / f"{args.week}.json"
-    if not scan_path.exists():
-        parser.error(f"no scan at {scan_path}; run scripts/scan.py first")
-    scan = json.loads(scan_path.read_text())
+    try:
+        out = run(cfg, week=args.week, data_dir=args.data_dir, has_readme=github.readme_checker(token))
+    except (ContractError, FetchError) as exc:
+        errors = exc.errors if isinstance(exc, ContractError) else [str(exc)]
+        print(f"FAILED: {len(errors)} error(s); nothing written", file=sys.stderr)
+        for err in errors:
+            print(f"  {err}", file=sys.stderr)
+        return 1
 
-    selected, skipped = select_items(
-        scan["items"],
-        cfg,
-        recent=recently_selected(scans_dir, args.week, cfg["select"]["repeat_weeks"]),
-        has_readme=github.readme_checker(token),
-    )
-    out = {
-        "week": args.week,
-        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
-        "scan": scan_path.name,
-        "quotas": cfg["select"]["quotas"],
-        "skipped": skipped,
-        "items": selected,
-    }
-    out_path = scans_dir / f"{args.week}.selected.json"
-    out_path.write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")
-
-    counts = Counter(item["source"] for item in selected)
-    print(f"selected {args.week}: {len(selected)} items {dict(counts)}; skipped {skipped}")
+    counts = Counter(item["source"] for item in out["items"])
+    print(f"selected {args.week}: {len(out['items'])} items {dict(counts)}; skipped {out['skipped']}")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())
