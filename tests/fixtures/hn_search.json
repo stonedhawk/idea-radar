@@ -1,0 +1,36 @@
+{
+  "hits": [
+    {
+      "_tags": ["story", "author_alice", "story_50092470", "show_hn"],
+      "author": "alice",
+      "created_at": "2026-10-14T18:23:14Z",
+      "created_at_i": 1792002194,
+      "num_comments": 36,
+      "objectID": "50092470",
+      "points": 148,
+      "story_id": 50092470,
+      "story_text": "Hi HN!<p>We built a screen sharing tool &amp; open-sourced it.</p>",
+      "title": "Show HN: Petal, open-source screen sharing",
+      "updated_at": "2026-10-15T05:51:45Z",
+      "url": "https://petal.example/"
+    },
+    {
+      "_tags": ["story", "author_bob", "story_50080001", "show_hn"],
+      "author": "bob",
+      "created_at": "2026-10-12T08:00:00Z",
+      "created_at_i": 1791792000,
+      "num_comments": 4,
+      "objectID": "50080001",
+      "points": 31,
+      "story_id": 50080001,
+      "story_text": null,
+      "title": "Show HN: A text-only post",
+      "updated_at": "2026-10-13T00:00:00Z",
+      "url": null
+    }
+  ],
+  "nbHits": 2,
+  "nbPages": 1,
+  "page": 0,
+  "hitsPerPage": 100
+}

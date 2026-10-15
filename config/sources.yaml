@@ -1,0 +1,69 @@
+# Collection and selection settings (SPEC sections 6 and 7).
+# Every topic, threshold and quota lives here. The code has no defaults.
+
+github:
+  topics:
+    - ai-agents
+    - mcp
+    - claude-code
+    - llm-evals
+    - llm
+    - rag
+    - prompt-engineering
+    - agents
+    - product-management
+    - analytics
+    - ab-testing
+    - developer-tools
+    - gamedev
+    - game-development
+    - godot
+    - unity
+  new_min_stars: 30        # new repos: topic:{t} created:>{today-30d} stars:>30
+  est_min_stars: 500       # established repos: topic:{t} pushed:>{today-7d} stars:>500
+  new_window_days: 30
+  active_window_days: 7
+  per_query: 30
+  sleep_seconds: 2.5       # search API allows 30 requests per minute authenticated
+
+show_hn:
+  min_points: 20
+  window_days: 7
+  hits_per_page: 100
+  max_pages: 3
+
+hf_spaces:
+  limit: 100
+
+velocity:
+  # A star snapshot this many days old gives a measured velocity.
+  min_days: 5
+  max_days: 10
+
+select:
+  # Quota order is also the order of items in the selected file.
+  quotas:
+    github: 12
+    show_hn: 5
+    hf_space: 3
+  diversity_cap: 3         # at most this many items per primary topic
+  repeat_weeks: 2          # skip anything selected in this many previous weeks
+
+exclude:
+  # Matched against whole words in GitHub repo names and topics, and HF Space
+  # ids and titles. A trailing "s" also matches, so "tutorial" catches "tutorials".
+  terms:
+    - awesome
+    - list
+    - course
+    - tutorial
+    - interview
+    - roadmap
+    - cheatsheet
+    - cheat-sheet
+  # Extra terms for HF Spaces only; the trending feed is noisy.
+  hf_terms:
+    - uncensored
+    - nsfw
+    - lora
+    - deepfake

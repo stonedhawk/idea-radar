@@ -1,0 +1,668 @@
+{
+  "week": "2026-W42",
+  "generated_at": "2026-10-12T01:30:00Z",
+  "items": [
+    {
+      "source": "github",
+      "id": "acme/fork-repo",
+      "url": "https://github.com/acme/fork-repo",
+      "title": "fork-repo",
+      "description": "fork-repo fixture",
+      "topics": [
+        "llm"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 5000.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "llm",
+      "stars": 1000,
+      "fork": true,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/old-repo",
+      "url": "https://github.com/acme/old-repo",
+      "title": "old-repo",
+      "description": "old-repo fixture",
+      "topics": [
+        "llm"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 4900.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "llm",
+      "stars": 1000,
+      "fork": false,
+      "archived": true
+    },
+    {
+      "source": "github",
+      "id": "acme/awesome-mcp",
+      "url": "https://github.com/acme/awesome-mcp",
+      "title": "awesome-mcp",
+      "description": "awesome-mcp fixture",
+      "topics": [
+        "mcp"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 4800.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "mcp",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/mcp-tools",
+      "url": "https://github.com/acme/mcp-tools",
+      "title": "mcp-tools",
+      "description": "mcp-tools fixture",
+      "topics": [
+        "mcp",
+        "awesome-list"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 4700.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "mcp",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/llm-course",
+      "url": "https://github.com/acme/llm-course",
+      "title": "llm-course",
+      "description": "llm-course fixture",
+      "topics": [
+        "llm"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 4600.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "llm",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/prompt-tutorials",
+      "url": "https://github.com/acme/prompt-tutorials",
+      "title": "prompt-tutorials",
+      "description": "prompt-tutorials fixture",
+      "topics": [
+        "prompt-engineering"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 4500.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "prompt-engineering",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/no-docs",
+      "url": "https://github.com/acme/no-docs",
+      "title": "no-docs",
+      "description": "no-docs fixture",
+      "topics": [
+        "rag"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 4400.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "rag",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/repeat-repo",
+      "url": "https://github.com/acme/repeat-repo",
+      "title": "repeat-repo",
+      "description": "repeat-repo fixture",
+      "topics": [
+        "rag"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 4300.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "rag",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/agent-1",
+      "url": "https://github.com/acme/agent-1",
+      "title": "agent-1",
+      "description": "agent-1 fixture",
+      "topics": [
+        "ai-agents"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 1000.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "ai-agents",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/agent-2",
+      "url": "https://github.com/acme/agent-2",
+      "title": "agent-2",
+      "description": "agent-2 fixture",
+      "topics": [
+        "ai-agents"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 990.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "ai-agents",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/agent-3",
+      "url": "https://github.com/acme/agent-3",
+      "title": "agent-3",
+      "description": "agent-3 fixture",
+      "topics": [
+        "ai-agents"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 980.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "ai-agents",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/agent-4",
+      "url": "https://github.com/acme/agent-4",
+      "title": "agent-4",
+      "description": "agent-4 fixture",
+      "topics": [
+        "ai-agents"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 970.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "ai-agents",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/mcp-1",
+      "url": "https://github.com/acme/mcp-1",
+      "title": "mcp-1",
+      "description": "mcp-1 fixture",
+      "topics": [
+        "mcp"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 960.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "mcp",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/mcp-2",
+      "url": "https://github.com/acme/mcp-2",
+      "title": "mcp-2",
+      "description": "mcp-2 fixture",
+      "topics": [
+        "mcp"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 950.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "mcp",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/mcp-3",
+      "url": "https://github.com/acme/mcp-3",
+      "title": "mcp-3",
+      "description": "mcp-3 fixture",
+      "topics": [
+        "mcp"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 940.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "mcp",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/game-1",
+      "url": "https://github.com/acme/game-1",
+      "title": "game-1",
+      "description": "game-1 fixture",
+      "topics": [
+        "gamedev"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 930.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "gamedev",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/game-2",
+      "url": "https://github.com/acme/game-2",
+      "title": "game-2",
+      "description": "game-2 fixture",
+      "topics": [
+        "gamedev"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 920.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "gamedev",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/game-3",
+      "url": "https://github.com/acme/game-3",
+      "title": "game-3",
+      "description": "game-3 fixture",
+      "topics": [
+        "gamedev"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 910.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "gamedev",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/evals-1",
+      "url": "https://github.com/acme/evals-1",
+      "title": "evals-1",
+      "description": "evals-1 fixture",
+      "topics": [
+        "llm-evals"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 900.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "llm-evals",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/evals-2",
+      "url": "https://github.com/acme/evals-2",
+      "title": "evals-2",
+      "description": "evals-2 fixture",
+      "topics": [
+        "llm-evals"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 890.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "llm-evals",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/evals-3",
+      "url": "https://github.com/acme/evals-3",
+      "title": "evals-3",
+      "description": "evals-3 fixture",
+      "topics": [
+        "llm-evals"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 880.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "llm-evals",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/godot-1",
+      "url": "https://github.com/acme/godot-1",
+      "title": "godot-1",
+      "description": "godot-1 fixture",
+      "topics": [
+        "godot"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 870.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "godot",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/godot-2",
+      "url": "https://github.com/acme/godot-2",
+      "title": "godot-2",
+      "description": "godot-2 fixture",
+      "topics": [
+        "godot"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 860.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "godot",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/tie-estimated",
+      "url": "https://github.com/acme/tie-estimated",
+      "title": "tie-estimated",
+      "description": "tie-estimated fixture",
+      "topics": [
+        "unity"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 100.0,
+      "traction_kind": "velocity_7d_estimated",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "unity",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/tie-measured",
+      "url": "https://github.com/acme/tie-measured",
+      "title": "tie-measured",
+      "description": "tie-measured fixture",
+      "topics": [
+        "unity"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 100.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "unity",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "github",
+      "id": "acme/playlist-sync",
+      "url": "https://github.com/acme/playlist-sync",
+      "title": "playlist-sync",
+      "description": "playlist-sync fixture",
+      "topics": [
+        "analytics"
+      ],
+      "language": "Python",
+      "license": "MIT",
+      "traction": 50.0,
+      "traction_kind": "velocity_7d_measured",
+      "created_at": "2026-01-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "primary_topic": "analytics",
+      "stars": 1000,
+      "fork": false,
+      "archived": false
+    },
+    {
+      "source": "show_hn",
+      "id": "9001",
+      "url": "https://news.ycombinator.com/item?id=9001",
+      "title": "Show HN: Agent replay debugger",
+      "description": "",
+      "topics": [],
+      "language": null,
+      "license": null,
+      "traction": 300.0,
+      "traction_kind": "hn_points",
+      "created_at": "2026-10-10T12:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "link": "https://example.com/9001"
+    },
+    {
+      "source": "show_hn",
+      "id": "9002",
+      "url": "https://news.ycombinator.com/item?id=9002",
+      "title": "Show HN: Eval runner for prompts",
+      "description": "",
+      "topics": [],
+      "language": null,
+      "license": null,
+      "traction": 200.0,
+      "traction_kind": "hn_points",
+      "created_at": "2026-10-10T12:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "link": "https://example.com/9002"
+    },
+    {
+      "source": "show_hn",
+      "id": "9003",
+      "url": "https://news.ycombinator.com/item?id=9003",
+      "title": "Show HN: A to-do list that plans your week",
+      "description": "",
+      "topics": [],
+      "language": null,
+      "license": null,
+      "traction": 100.0,
+      "traction_kind": "hn_points",
+      "created_at": "2026-10-10T12:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z",
+      "link": "https://example.com/9003"
+    },
+    {
+      "source": "hf_space",
+      "id": "Pepe104/MiniMax-H3-Turbo-Lora-UNCENSORED",
+      "url": "https://huggingface.co/spaces/Pepe104/MiniMax-H3-Turbo-Lora-UNCENSORED",
+      "title": "MiniMax H3 Turbo LoRA",
+      "description": "",
+      "topics": [
+        "gradio"
+      ],
+      "language": null,
+      "license": null,
+      "traction": 241.0,
+      "traction_kind": "hf_trending",
+      "created_at": "2026-09-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z"
+    },
+    {
+      "source": "hf_space",
+      "id": "someone/nsfw-detector",
+      "url": "https://huggingface.co/spaces/someone/nsfw-detector",
+      "title": "NSFW detector",
+      "description": "",
+      "topics": [
+        "gradio"
+      ],
+      "language": null,
+      "license": null,
+      "traction": 200.0,
+      "traction_kind": "hf_trending",
+      "created_at": "2026-09-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z"
+    },
+    {
+      "source": "hf_space",
+      "id": "multimodalart/jev-decision-index",
+      "url": "https://huggingface.co/spaces/multimodalart/jev-decision-index",
+      "title": "Jev Decision Index",
+      "description": "",
+      "topics": [
+        "gradio"
+      ],
+      "language": null,
+      "license": null,
+      "traction": 136.0,
+      "traction_kind": "hf_trending",
+      "created_at": "2026-09-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z"
+    },
+    {
+      "source": "hf_space",
+      "id": "org/level-designer",
+      "url": "https://huggingface.co/spaces/org/level-designer",
+      "title": "Level Designer",
+      "description": "",
+      "topics": [
+        "gradio"
+      ],
+      "language": null,
+      "license": null,
+      "traction": 100.0,
+      "traction_kind": "hf_trending",
+      "created_at": "2026-09-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z"
+    },
+    {
+      "source": "hf_space",
+      "id": "org/npc-voice",
+      "url": "https://huggingface.co/spaces/org/npc-voice",
+      "title": "NPC Voice",
+      "description": "",
+      "topics": [
+        "gradio"
+      ],
+      "language": null,
+      "license": null,
+      "traction": 90.0,
+      "traction_kind": "hf_trending",
+      "created_at": "2026-09-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z"
+    },
+    {
+      "source": "hf_space",
+      "id": "org/patch-notes",
+      "url": "https://huggingface.co/spaces/org/patch-notes",
+      "title": "Patch Notes Writer",
+      "description": "",
+      "topics": [
+        "gradio"
+      ],
+      "language": null,
+      "license": null,
+      "traction": 80.0,
+      "traction_kind": "hf_trending",
+      "created_at": "2026-09-01T00:00:00Z",
+      "fetched_at": "2026-10-12T01:30:00Z"
+    }
+  ]
+}
