@@ -1,0 +1,37 @@
+[
+  {
+    "_id": "6a7fa36714628228419dd422",
+    "id": "Pepe104/MiniMax-H3-Turbo-Lora-UNCENSORED",
+    "cardData": {"title": "MiniMax H3 Turbo LoRA", "emoji": "🎬", "sdk": "gradio"},
+    "likes": 1567,
+    "trendingScore": 241,
+    "sdk": "gradio",
+    "tags": ["gradio", "region:us"],
+    "createdAt": "2026-08-14T23:23:19.000Z"
+  },
+  {
+    "_id": "6aac47fc67916fa3159cbbc4",
+    "id": "multimodalart/jev-decision-index",
+    "cardData": {
+      "title": "Jev Decision Index",
+      "emoji": "🔬",
+      "sdk": "static",
+      "short_description": "Rank decisions by evidence",
+      "license": "apache-2.0"
+    },
+    "likes": 663,
+    "trendingScore": 136,
+    "sdk": "static",
+    "tags": ["static", "region:us"],
+    "createdAt": "2026-09-17T20:05:16.000Z"
+  },
+  {
+    "_id": "6aac47fc67916fa3159cbbc5",
+    "id": "org/no-card",
+    "likes": 10,
+    "trendingScore": 12,
+    "sdk": "docker",
+    "tags": ["docker", "mcp-server", "region:us"],
+    "createdAt": "2026-10-01T00:00:00.000Z"
+  }
+]
