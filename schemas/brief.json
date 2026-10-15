@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stonedhawk/idea-radar/schemas/brief.json",
+  "title": "Brief",
+  "description": "One brief per selected item (SPEC 8.1). Written to briefs.json as {week, briefs: [...], skipped: [...]}. source, id, url and title copy the scan item.",
+  "type": "object",
+  "required": ["source", "id", "url", "title", "problem", "user", "mechanism", "why_now", "evidence"],
+  "additionalProperties": false,
+  "properties": {
+    "source": {"enum": ["github", "show_hn", "hf_space"]},
+    "id": {"type": "string", "minLength": 1},
+    "url": {"type": "string", "pattern": "^https://"},
+    "title": {"type": "string", "minLength": 1},
+    "problem": {
+      "type": "string",
+      "minLength": 10,
+      "pattern": "^[^\\r\\n]+$",
+      "description": "What hurts, in one sentence."
+    },
+    "user": {"type": "string", "minLength": 3, "pattern": "^[^\\r\\n]+$", "description": "Who has the problem."},
+    "mechanism": {
+      "type": "string",
+      "minLength": 20,
+      "pattern": "^[^\\r\\n]+$",
+      "description": "How the tool works as a domain-independent pattern. Must not name the product (validate.py checks the repo or space name)."
+    },
+    "why_now": {
+      "type": "string",
+      "minLength": 10,
+      "pattern": "^[^\\r\\n]+$",
+      "description": "Why it is getting attention this week, only from evidence in the source."
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^https://"}
+    }
+  }
+}

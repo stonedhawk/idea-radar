@@ -1,0 +1,57 @@
+{
+  "week": "2026-W42",
+  "scores": [
+    {
+      "idea_id": "2026-W42-01",
+      "lens": "gaming_x_ai_pm",
+      "criteria": {
+        "lens_fit": {"score": 5, "reason": "LiveOps work carried out by an AI agent."},
+        "rahul_edge": {"score": 4, "reason": "Knowing which event KPIs matter changes the alert rules."},
+        "build_size": {"score": 4, "reason": "Two weekends: reader, detector, ticket writer."},
+        "demo": {"score": 4, "reason": "Spike to ticket is visible, though it needs a caption."},
+        "verifiable": {"score": 5, "reason": "Golden set of KPI files with labelled anomalies."},
+        "distribution": {"score": 3, "reason": "LiveOps Slack groups exist but are small."}
+      },
+      "total": 86
+    },
+    {
+      "idea_id": "2026-W42-02",
+      "lens": "ai_pm_only",
+      "criteria": {
+        "lens_fit": {"score": 2, "reason": "AI product management with no gaming angle."},
+        "rahul_edge": {"score": 5, "reason": "Has run experiment backlogs for years."},
+        "build_size": {"score": 5, "reason": "One weekend for a CLI."},
+        "demo": {"score": 5, "reason": "Backlog in, plan out, no narration needed."},
+        "verifiable": {"score": 5, "reason": "Packing maths checked by worked examples."},
+        "distribution": {"score": 5, "reason": "Lenny's community and PM newsletters."}
+      },
+      "total": 85
+    },
+    {
+      "idea_id": "2026-W42-04",
+      "lens": "gaming_only",
+      "criteria": {
+        "lens_fit": {"score": 4, "reason": "Gaming tool without AI product work."},
+        "rahul_edge": {"score": 3, "reason": "Some insight into event arena layouts."},
+        "build_size": {"score": 2, "reason": "Three weekends for prompt, renderer and checks."},
+        "demo": {"score": 3, "reason": "Grid appears but needs explanation."},
+        "verifiable": {"score": 3, "reason": "Validity is checkable, quality is not."},
+        "distribution": {"score": 2, "reason": "No obvious channel beyond general gamedev forums."}
+      },
+      "total": 60
+    },
+    {
+      "idea_id": "2026-W42-05",
+      "lens": "neither",
+      "criteria": {
+        "lens_fit": {"score": 0, "reason": "Neither gaming nor AI product work."},
+        "rahul_edge": {"score": 5, "reason": "Scored high only to test the drop rule."},
+        "build_size": {"score": 5, "reason": "One weekend."},
+        "demo": {"score": 5, "reason": "Instantly visible."},
+        "verifiable": {"score": 5, "reason": "Fully unit tested."},
+        "distribution": {"score": 5, "reason": "Product Hunt."}
+      },
+      "total": 75
+    }
+  ]
+}

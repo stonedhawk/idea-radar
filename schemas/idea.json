@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stonedhawk/idea-radar/schemas/idea.json",
+  "title": "Idea",
+  "description": "One brainstormed idea (SPEC 8.2) with its originality verdict (SPEC 8.3). Written to ideas.json as {week, ideas: [...]}. The originality block is added by the gate; validation runs after it, so it is required.",
+  "type": "object",
+  "required": [
+    "idea_id",
+    "title",
+    "one_liner",
+    "target_user",
+    "move",
+    "source_ids",
+    "smallest_version",
+    "demo",
+    "verifiable_by",
+    "rahul_edge",
+    "originality"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "idea_id": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-W[0-9]{2}-[0-9]{2}$",
+      "description": "<week>-<nn>, e.g. 2026-W42-03."
+    },
+    "title": {"type": "string", "minLength": 3, "maxLength": 80},
+    "one_liner": {"type": "string", "minLength": 10, "maxLength": 200, "pattern": "^[^\\r\\n]+$"},
+    "target_user": {"type": "string", "minLength": 3},
+    "move": {
+      "type": "integer",
+      "enum": [1, 2, 3, 4],
+      "description": "1 same mechanism new user, 2 same user earlier moment, 3 combine two patterns, 4 invert."
+    },
+    "source_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1},
+      "description": "Ids of the briefs the idea came from. The first is the primary source."
+    },
+    "smallest_version": {"type": "string", "minLength": 10, "description": "What ships in 2 weekends or less."},
+    "demo": {"type": "string", "minLength": 10, "pattern": "^[^\\r\\n]+$", "description": "The 10-second GIF in one sentence."},
+    "verifiable_by": {"type": "string", "minLength": 10, "description": "Script, golden set or chat-app runs."},
+    "rahul_edge": {
+      "type": "string",
+      "description": "What 16 years of F2P and LiveOps adds. Empty string if nothing."
+    },
+    "originality": {"$ref": "#/$defs/originality"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"move": {"const": 3}}},
+      "then": {"properties": {"source_ids": {"minItems": 2}}}
+    }
+  ],
+  "$defs": {
+    "originality": {
+      "type": "object",
+      "required": ["verdict", "searches", "evidence_urls", "differentiator", "kill_reason"],
+      "additionalProperties": false,
+      "properties": {
+        "verdict": {"enum": ["clear", "differentiated", "killed"]},
+        "searches": {
+          "type": "object",
+          "required": ["github", "web"],
+          "additionalProperties": false,
+          "properties": {
+            "github": {
+              "type": "array",
+              "minItems": 2,
+              "items": {"type": "string", "minLength": 2},
+              "description": "The keyword sets passed to gh search repos."
+            },
+            "web": {
+              "type": "array",
+              "minItems": 2,
+              "items": {"type": "string", "minLength": 2},
+              "description": "The web search queries."
+            }
+          }
+        },
+        "evidence_urls": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^https://"},
+          "description": "Required for every verdict. For clear, the search result pages or the closest non-matches."
+        },
+        "differentiator": {
+          "type": "string",
+          "pattern": "^[^\\r\\n]*$",
+          "description": "One line. Required when the verdict is differentiated."
+        },
+        "kill_reason": {
+          "type": "string",
+          "pattern": "^[^\\r\\n]*$",
+          "description": "One line naming the project that already does it. Required when the verdict is killed."
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"verdict": {"const": "differentiated"}}},
+          "then": {"properties": {"differentiator": {"minLength": 10}}}
+        },
+        {
+          "if": {"properties": {"verdict": {"const": "killed"}}},
+          "then": {"properties": {"kill_reason": {"minLength": 10}}}
+        }
+      ]
+    }
+  }
+}
