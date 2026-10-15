@@ -81,6 +81,25 @@ def test_hf_title_is_checked_as_well_as_id(items, config):
 
 
 @pytest.mark.parametrize(
+    "space_id, title",
+    [
+        ("hugging-apps/bfs-best-face-swap", "BFS Best Face Swap"),  # selected in 2026-W42
+        ("org/FaceSwapLab", "Face Swap Lab"),
+        ("org/faceswap-v2", "Demo"),
+        ("org/face-swaps", "Demo"),
+    ],
+)
+def test_face_swap_spaces_are_excluded(items, config, space_id, title):
+    space = {**by_id(items, "org/level-designer"), "id": space_id, "title": title}
+    assert exclusion_reason(space, config["exclude"]) == "excluded_term"
+
+
+def test_face_terms_do_not_catch_unrelated_spaces(items, config):
+    space = {**by_id(items, "org/level-designer"), "id": "org/face-landmarks", "title": "Swap tiles puzzle"}
+    assert exclusion_reason(space, config["exclude"]) is None
+
+
+@pytest.mark.parametrize(
     "text, term, expected",
     [
         ("awesome-mcp", "awesome", True),
