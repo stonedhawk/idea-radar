@@ -67,3 +67,5 @@ exclude:
     - nsfw
     - lora
     - deepfake
+    - face-swap
+    - faceswap
