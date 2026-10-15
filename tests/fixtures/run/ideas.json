@@ -1,0 +1,100 @@
+{
+  "week": "2026-W42",
+  "ideas": [
+    {
+      "idea_id": "2026-W42-01",
+      "title": "LiveOps incident filer",
+      "one_liner": "Watches live game telemetry and files structured LiveOps tickets with the event and segment attached.",
+      "target_user": "LiveOps producers",
+      "move": 1,
+      "source_ids": ["acme/agent-1"],
+      "smallest_version": "A script that reads a CSV of event KPIs and writes tickets for anomalies.",
+      "demo": "A KPI spike appears and a ticket with the event name and segment pops up.",
+      "verifiable_by": "A golden set of 30 KPI files with known anomalies, checked by a script.",
+      "rahul_edge": "Knows which KPI drops matter during an event and which are noise.",
+      "originality": {
+        "verdict": "clear",
+        "searches": {"github": ["liveops anomaly tickets", "game telemetry incident agent"], "web": ["liveops incident automation tool", "game kpi anomaly ticket bot"]},
+        "evidence_urls": ["https://github.com/search?q=liveops+anomaly+tickets&type=repositories"],
+        "differentiator": "",
+        "kill_reason": ""
+      }
+    },
+    {
+      "idea_id": "2026-W42-02",
+      "title": "Experiment ticket planner",
+      "one_liner": "Turns an AI PM's experiment backlog into tickets packed into the next sprint by size.",
+      "target_user": "AI product managers",
+      "move": 3,
+      "source_ids": ["acme/agent-1", "9003"],
+      "smallest_version": "A CLI that reads a YAML backlog and prints a sprint plan.",
+      "demo": "A messy backlog becomes a two-week plan in one command.",
+      "verifiable_by": "Packing maths checked against 5 worked examples.",
+      "rahul_edge": "",
+      "originality": {
+        "verdict": "differentiated",
+        "searches": {"github": ["experiment backlog planner", "ab test sprint planner"], "web": ["experiment backlog planning tool", "ab test roadmap planner"]},
+        "evidence_urls": ["https://github.com/example/exp-planner"],
+        "differentiator": "Existing planners order experiments by impact only; this packs them by size into a sprint.",
+        "kill_reason": ""
+      }
+    },
+    {
+      "idea_id": "2026-W42-03",
+      "title": "Anti-planner",
+      "one_liner": "Removes tasks from your week until it fits instead of scheduling them.",
+      "target_user": "Knowledge workers",
+      "move": 4,
+      "source_ids": ["9003"],
+      "smallest_version": "A web page that takes a list and crosses items out.",
+      "demo": "A list of 20 tasks shrinks to 6.",
+      "verifiable_by": "Unit tests on the pruning rule.",
+      "rahul_edge": "",
+      "originality": {
+        "verdict": "killed",
+        "searches": {"github": ["task pruning planner", "todo list shrink"], "web": ["app that removes tasks from your week", "anti todo list app"]},
+        "evidence_urls": ["https://github.com/example/anti-todo"],
+        "differentiator": "",
+        "kill_reason": "example/anti-todo (2,000 stars, pushed last month) does exactly this."
+      }
+    },
+    {
+      "idea_id": "2026-W42-04",
+      "title": "Event map blockout",
+      "one_liner": "Turns a LiveOps event brief into a blockout map for the event's arena.",
+      "target_user": "Game producers",
+      "move": 2,
+      "source_ids": ["org/level-designer"],
+      "smallest_version": "A prompt and a renderer for a 16 by 16 grid.",
+      "demo": "A one-line event brief becomes a playable grid.",
+      "verifiable_by": "Grid validity checks in a script.",
+      "rahul_edge": "Event arenas follow repeatable layouts.",
+      "originality": {
+        "verdict": "clear",
+        "searches": {"github": ["event map generator", "text to tilemap"], "web": ["liveops event map generator", "text to game level tool"]},
+        "evidence_urls": ["https://github.com/search?q=text+to+tilemap&type=repositories"],
+        "differentiator": "",
+        "kill_reason": ""
+      }
+    },
+    {
+      "idea_id": "2026-W42-05",
+      "title": "Weekly plan for anyone",
+      "one_liner": "A general weekly planner with no gaming or AI product angle.",
+      "target_user": "Anyone",
+      "move": 1,
+      "source_ids": ["org/level-designer"],
+      "smallest_version": "A single page planner.",
+      "demo": "Tasks drop into a calendar.",
+      "verifiable_by": "Unit tests on slot packing.",
+      "rahul_edge": "",
+      "originality": {
+        "verdict": "clear",
+        "searches": {"github": ["weekly planner", "calendar packer"], "web": ["weekly planner app", "auto schedule tasks"]},
+        "evidence_urls": ["https://github.com/search?q=weekly+planner&type=repositories"],
+        "differentiator": "",
+        "kill_reason": ""
+      }
+    }
+  ]
+}
