@@ -5,7 +5,7 @@ Commit audited: draft against branch `feat/m4-audit-readme`, based on main at f8
 Audited on: 2026-10-15
 Auditor: Claude Code (Opus 5.5), for Rahul M Shah
 
-<!-- Draft. It moves to Drive 05_Audit/idea-radar/AUDIT.md once the open rows are closed, and leaves the repo then. -->
+<!-- Draft. It moves to Drive 05_Audit/idea-radar/AUDIT.md once the open rows are closed, and leaves the repo then. README.md:N references are line numbers in README.md on this branch; re-check every one against the commit audited at the final audit. -->
 
 ## Verdict
 
@@ -32,7 +32,7 @@ Auditor: Claude Code (Opus 5.5), for Rahul M Shah
 | Claim | Evidence | Action |
 |---|---|---|
 | Hook: "Every Monday: what is gaining traction in developer and AI tools, turned into tool ideas for game and AI product teams." (README.md:3) | `.github/workflows/scan.yml:5` cron Monday 01:30 UTC; SPEC 8 weekly task on Monday; `prompts/brainstorm.md:3` names the target users. | keep |
-| Quickstart: three commands fork, install and scan (README.md:13-17) | Fresh clone in a scratch directory on 2026-10-15, `pip install -r requirements.txt` in a venv, then `GITHUB_TOKEN=$(gh auth token) python scripts/scan.py`: "scan 2026-W42: 676 items (github 529, show_hn 47, hf_space 100)". `gh repo fork --clone` was replaced by `git clone`, since forking is the reader's step. | keep |
+| Quickstart: three commands fork, install into a venv and scan (README.md:13-17) | Fresh `git clone` in a scratch directory on 2026-10-15, then lines 2 and 3 exactly as written: "scan 2026-W42: 676 items (github 529, show_hn 47, hf_space 100)". `gh repo fork --clone` was replaced by `git clone`, since forking is the reader's step. | keep |
 | The scan writes `data/scans/<week>.json` and adds star counts to `data/stars.csv` (README.md:19) | `scripts/scan.py:1-8` docstring, `write_star_rows` at scripts/scan.py:110; the run above modified both files. | keep |
 | `select.py --week <week>` picks the 20 items (README.md:19) | Same run: "selected 2026-W42: 20 items {'github': 12, 'show_hn': 5, 'hf_space': 3}". | keep |
 | Forks need Actions enabled before workflows run (README.md:21) | GitHub's behaviour for forked repos, not this repo's code. | keep |

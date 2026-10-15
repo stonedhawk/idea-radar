@@ -16,7 +16,8 @@ def test_runs_from_the_command_line_and_every_example_matches():
     )
     assert result.returncode == 0, result.stdout + result.stderr
     assert "| NO |" not in result.stdout
-    assert "16 of 16 worked examples match." in result.stdout
+    n = len(check_maths.VELOCITY) + len(check_maths.TOTALS) + len(check_maths.CAPS)
+    assert f"{n} of {n} worked examples match." in result.stdout
 
 
 def test_at_least_three_worked_examples_per_area():

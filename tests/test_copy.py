@@ -5,25 +5,27 @@ return them, so it is out of scope; everything else we wrote is in.
 """
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
 from scripts.validate import DASHES
 from tests.conftest import ROOT
 
-SKIP_DIRS = {".git", ".venv", "__pycache__", ".pytest_cache", "runs", ".claude"}
-SKIP_PATHS = {Path("data/scans")}
+THIRD_PARTY = Path("data/scans")
 
 
 def own_text_files() -> list[Path]:
+    """Every tracked text file except third-party scan data: what the repo publishes."""
+    tracked = subprocess.run(
+        ["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, text=True, check=True
+    ).stdout.split("\0")
     files = []
-    for path in ROOT.rglob("*"):
-        rel = path.relative_to(ROOT)
-        if not path.is_file() or SKIP_DIRS & set(rel.parts):
-            continue
-        if any(rel.is_relative_to(skip) for skip in SKIP_PATHS):
+    for name in filter(None, tracked):
+        rel = Path(name)
+        if rel.is_relative_to(THIRD_PARTY) or not (ROOT / rel).is_file():
             continue
         try:
-            path.read_text(encoding="utf-8")
+            (ROOT / rel).read_text(encoding="utf-8")
         except UnicodeDecodeError:
             continue  # images and other binaries
         files.append(rel)
@@ -32,8 +34,9 @@ def own_text_files() -> list[Path]:
 
 def test_scope_includes_the_files_people_read():
     files = set(own_text_files())
-    for must in ["README.md", "SPEC.md", "LICENSE", "docs/AUDIT.draft.md", "prompts/spec.md"]:
+    for must in ["README.md", "SPEC.md", "LICENSE", "prompts/spec.md", "templates/README.template.md"]:
         assert Path(must) in files
+    assert not any(f.is_relative_to(THIRD_PARTY) for f in files)
 
 
 def test_no_en_or_em_dashes_in_our_own_copy():

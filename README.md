@@ -12,11 +12,11 @@ You need Python 3.12 (what CI uses) and the GitHub CLI, logged in.
 
 ```bash
 gh repo fork stonedhawk/idea-radar --clone && cd idea-radar
-pip install -r requirements.txt
-GITHUB_TOKEN=$(gh auth token) python scripts/scan.py
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+GITHUB_TOKEN=$(gh auth token) .venv/bin/python scripts/scan.py
 ```
 
-That writes this week's scan to `data/scans/<week>.json` and adds GitHub star counts to `data/stars.csv`. `python scripts/select.py --week <week>`, with the same token, then picks the 20 items the rest of the pipeline works on.
+That writes this week's scan to `data/scans/<week>.json` and adds GitHub star counts to `data/stars.csv`. `.venv/bin/python scripts/select.py --week <week>`, with the same token, then picks the 20 items the rest of the pipeline works on.
 
 To run it every week, enable Actions on your fork (GitHub does not run workflows in a new fork until you do) and set up the weekly Claude task from [SPEC.md, Appendix A](SPEC.md#appendix-a-weekly-claude-task-prompt), pointed at your fork.
 
@@ -31,7 +31,7 @@ To run it every week, enable Actions on your fork (GitHub does not run workflows
 ## How it is checked
 
 - `pytest` runs every test with the network blocked ([`tests/conftest.py`](tests/conftest.py)): velocity maths, every exclusion rule, quotas, the diversity cap, the two-week repeat rule, validation, rendering, star-check tracking, and a required-rules and length test for each of the five prompts.
-- `python scripts/check_maths.py` checks velocity (both flags), score totals and lens caps against 16 hand-worked examples, each written out next to its inputs, and exits 1 on any mismatch.
+- `python scripts/check_maths.py` checks velocity (both flags), score totals and lens caps against hand-worked examples, at least three per flag and area, each written out next to its inputs, and exits 1 on any mismatch.
 - `python scripts/validate.py runs/<week>` gates every weekly run before anything reaches Drive.
 
 ## What leaves your machine

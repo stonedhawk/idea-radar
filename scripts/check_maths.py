@@ -145,7 +145,7 @@ def check_velocity(window: dict) -> list[Row]:
 
 
 def criteria_for(scores: list[int]) -> dict:
-    return {name: {"score": s, "reason": "worked example"} for name, s in zip(CRITERIA, scores)}
+    return {name: {"score": s, "reason": "worked example"} for name, s in zip(CRITERIA, scores, strict=True)}
 
 
 def check_totals(rubric: dict) -> list[Row]:
