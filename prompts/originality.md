@@ -9,10 +9,10 @@ Run all four for every idea:
 1. Two GitHub searches with different keyword sets, sorted by stars:
 
    ```
-   gh search repos "<keywords>" --sort stars --limit 10 --json fullName,description,stargazersCount,pushedAt,url
+   gh search repos <word> <word> <word> --sort stars --limit 10 --json fullName,description,stargazersCount,pushedAt,url
    ```
 
-   One set describes the mechanism in plain words ("kpi anomaly ticket"). The other uses the target user's vocabulary ("liveops event monitoring").
+   Use 2 or 3 words per set. GitHub ANDs every word against names, descriptions and topics, so longer sets usually return nothing. Do not quote the words: a quoted string is an exact phrase search. Close stdin (`</dev/null`) when calling gh in a loop, or it reads the loop's input. One set describes the mechanism in plain words ("kpi anomaly ticket"). The other uses the target user's vocabulary ("liveops event monitoring").
 
 2. Two web searches: one for the tool ("liveops anomaly alert tool"), one for the job the user is doing ("how to catch a broken liveops event early").
 
@@ -25,6 +25,8 @@ Record the exact queries in `searches.github` and `searches.web`.
 | `clear` | Nothing comparable found. |
 | `differentiated` | Something comparable exists. `differentiator` states, in one line, what this idea does that the closest match does not. |
 | `killed` | A maintained project does the same thing and no one-line difference holds. Maintained means a commit in the last 6 months and 100 or more stars. `kill_reason` names it with its stars and last push. |
+
+A shipping commercial product counts as maintained. Name it and link its product page.
 
 A comparable project that is unmaintained (no commit in 6 months) or tiny (under 100 stars) does not kill an idea; it makes it `differentiated` at most, and the differentiator can be "maintained" or "packaged for producers" only if that is genuinely the gap.
 

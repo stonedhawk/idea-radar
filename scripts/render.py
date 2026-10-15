@@ -89,6 +89,12 @@ def quoted(queries: list[str]) -> str:
     return ", ".join(f'"{one_line(q)}"' for q in queries)
 
 
+def key_evidence(orig: dict) -> str:
+    """The most specific evidence URL: the first that is not a search results page."""
+    urls = orig["evidence_urls"]
+    return next((u for u in urls if "/search?" not in u), urls[0])
+
+
 def dropped_ids(data: dict, rubric: dict) -> set[str]:
     """Ideas whose lens is outside the rubric (SPEC 8.4: scored 0 and dropped)."""
     return {s["idea_id"] for s in data["scores"]["scores"] if s["lens"] in rubric["dropped_lenses"]}
@@ -206,7 +212,7 @@ def render_digest(week: str, data: dict, selected: dict | None, rubric: dict) ->
     if killed:
         for idea in killed:
             orig = idea["originality"]
-            lines.append(f"- {idea['idea_id']} {one_line(idea['title'])}: {one_line(orig['kill_reason'])} ({orig['evidence_urls'][0]})")
+            lines.append(f"- {idea['idea_id']} {one_line(idea['title'])}: {one_line(orig['kill_reason'])} ({key_evidence(orig)})")
     else:
         lines.append("None.")
     if dropped:
