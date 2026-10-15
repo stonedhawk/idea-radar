@@ -69,7 +69,8 @@ idea-radar/
 │   ├── scan.py                        runs collectors, writes data/scans/<week>.json
 │   ├── select.py                      velocity, exclusions, quotas, diversity
 │   ├── validate.py                    validates LLM output files against schemas
-│   └── render.py                      validated JSON to Drive files and sheet rows
+│   ├── render.py                      validated JSON to Drive files and sheet rows
+│   └── track.py                       shipped rows due a 7-day or 30-day star check
 ├── prompts/
 │   ├── brief.md
 │   ├── brainstorm.md
@@ -282,7 +283,7 @@ Ship means: the repo is public, About and topics are set, the portfolio card PR 
 
 Tracking runs inside the weekly Claude task:
 
-- For each row in the backlog sheet with `status = shipped`, record stars on the 7th and 30th day after the ship date into `06_Shipped/{slug}/results.md`.
+- For each row in the backlog sheet with `status = shipped`, record stars on the 7th and 30th day after the ship date into `06_Shipped/{slug}/results.md`. `python scripts/track.py backlog.json` lists the checks that are due: a check is due once its day has passed and its `stars_7d` or `stars_30d` cell is still empty, so a missed weekly run is caught up the next week.
 - LinkedIn reach and inbound messages are entered by hand.
 - After every 5 ships, the task writes a comparison of scores against 30-day stars and proposes weight changes as a PR to `config/rubric.yaml`. Rahul approves or rejects it.
 
@@ -368,8 +369,9 @@ Weekly idea-radar run. Follow SPEC.md sections 8 and 12 exactly.
    - write briefs/*.md and _digest.md to 02_Briefs/{YYYY}-W{ww}/
    - append backlog_rows.json to 03_Backlog/idea-backlog (status new
      or shortlisted); archive.md goes to 99_Archive with the reasons
-9. Tracking: for every shipped row whose ship date was 7 or 30 days ago,
-   record stars into 06_Shipped/{slug}/results.md and the sheet.
+9. Tracking: save the backlog tab's values to runs/{YYYY}-W{ww}/backlog.json
+   and run python scripts/track.py on it. For every check it lists, record
+   stars into 06_Shipped/{slug}/results.md and the sheet.
 10. Finish with a summary: the shortlisted ideas with totals, their
     originality verdicts, and any step that failed.
 ```
