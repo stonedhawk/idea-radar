@@ -48,6 +48,9 @@ def test_license_names_rahul_m_shah():
     assert "Copyright (c) 2026 Rahul M Shah" in (ROOT / "LICENSE").read_text()
 
 
-def test_agent_files_are_one_line():
-    for name in ["CLAUDE.md", "AGENTS.md", "GEMINI.md"]:
-        assert (ROOT / name).read_text().strip() == "Read SPEC.md first."
+def test_agent_shims_only_import_agents_md():
+    """Instructions live in AGENTS.md; CLAUDE.md and GEMINI.md add nothing (see tests/test_agents.py)."""
+    for name in ["CLAUDE.md", "GEMINI.md"]:
+        lines = [line for line in (ROOT / name).read_text().splitlines() if line.strip()]
+        assert lines[-1] == "@AGENTS.md"
+        assert len(lines) == 3

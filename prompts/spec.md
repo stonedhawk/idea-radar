@@ -2,11 +2,11 @@
 
 Rahul picks an idea by setting `status = picked` in the backlog sheet, then asks: "Write the spec for {idea title}." You turn that idea into three files a coding agent can build from without asking a question: `SPEC.md`, `README.target.md` and `LAUNCH.md`, from the templates in `templates/`.
 
-This runs on request, in Cowork or Claude Code. It is not part of the weekly task.
+This runs on request, in any agent that follows `AGENTS.md`. It is not part of the weekly task.
 
 ## 1. Find the idea
 
-Read the `backlog` tab of `Build Lab/03_Backlog/idea-backlog`. Columns are in SPEC 13.1.
+Read the `backlog` tab of `Build Lab/03_Backlog/idea-backlog` (locally, its `backlog.csv`). Columns are in SPEC 13.1.
 
 - Use the row whose `title` matches the request and whose `status` is `picked`.
 - If that row's status is not `picked`, stop and say so. Do not change a status to pick an idea for Rahul.
@@ -85,7 +85,7 @@ Every item must hold. Fix and re-check; do not write a file that fails one.
 
 ## 5. Write to Drive
 
-In `Build Lab/04_Specs/`, create the folder `{slug}` if it does not exist and write the three files into it as plain Markdown (`text/markdown`, no conversion to Google Docs): `SPEC.md`, `README.target.md`, `LAUNCH.md`. If the folder already has them, ask Rahul before overwriting.
+In `Build Lab/04_Specs/`, create the folder `{slug}` if it does not exist and write the three files into it as plain Markdown (`text/markdown`, no conversion to Google Docs): `SPEC.md`, `README.target.md`, `LAUNCH.md`. If the folder already has them, ask Rahul before overwriting. Without Drive tools, write them to `Build Lab/04_Specs/{slug}/` under the local publish folder (`AGENTS.md`) and say so.
 
 Then set the backlog row's `status` to `specced`. Do not share any file or folder.
 

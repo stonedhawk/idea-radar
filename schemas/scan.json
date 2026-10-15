@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stonedhawk/idea-radar/schemas/scan.json",
+  "title": "Scan file",
+  "description": "data/scans/<week>.json, written by scripts/scan.py (SPEC 6.5). Each entry of items is checked separately against scan_item.json by scripts/contracts.py, which also checks that counts match the items.",
+  "type": "object",
+  "required": ["week", "generated_at", "counts", "items"],
+  "additionalProperties": false,
+  "properties": {
+    "week": {"type": "string", "pattern": "^[0-9]{4}-W[0-9]{2}$"},
+    "generated_at": {"type": "string", "minLength": 1},
+    "counts": {
+      "type": "object",
+      "required": ["github", "show_hn", "hf_space"],
+      "additionalProperties": false,
+      "properties": {
+        "github": {"type": "integer", "minimum": 0},
+        "show_hn": {"type": "integer", "minimum": 0},
+        "hf_space": {"type": "integer", "minimum": 0}
+      }
+    },
+    "items": {"type": "array"}
+  }
+}

@@ -4,7 +4,9 @@
 Usage: GITHUB_TOKEN=... python scripts/scan.py [--week 2026-W42]
 
 Also appends this scan's GitHub star counts to data/stars.csv. Re-running a
-week replaces that week's rows instead of adding duplicates.
+week replaces that week's rows instead of adding duplicates. The scan is
+checked against schemas/scan.json before anything is written; on a failed
+request or a failed check nothing is written and the exit code is 1.
 """
 from __future__ import annotations
 
@@ -29,7 +31,8 @@ from pathlib import Path  # noqa: E402
 import yaml  # noqa: E402
 
 from collectors import github, hf, hn  # noqa: E402
-from collectors.common import SOURCES, get_json  # noqa: E402
+from collectors.common import SOURCES, FetchError, get_json  # noqa: E402
+from scripts.contracts import ContractError, require  # noqa: E402
 
 ROOT = Path(_ROOT)
 STARS_FIELDS = ("week", "date", "repo", "stars")
@@ -155,6 +158,7 @@ def run(
         "items": items,
     }
     out = data_dir / "scans" / f"{week}.json"
+    require(scan, "scan", out.name)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(scan, indent=2, ensure_ascii=False) + "\n")
     write_star_rows(stars_path, rows, week, today, items)
@@ -173,7 +177,14 @@ def main(argv: list[str] | None = None) -> int:
     if not token:
         parser.error("set GITHUB_TOKEN; unauthenticated search allows only 10 requests per minute")
 
-    scan = run(load_config(args.config), week=args.week, now=now, data_dir=args.data_dir, token=token)
+    try:
+        scan = run(load_config(args.config), week=args.week, now=now, data_dir=args.data_dir, token=token)
+    except (ContractError, FetchError) as exc:
+        errors = exc.errors if isinstance(exc, ContractError) else [str(exc)]
+        print(f"FAILED: {len(errors)} error(s); nothing written", file=sys.stderr)
+        for err in errors:
+            print(f"  {err}", file=sys.stderr)
+        return 1
     counts = ", ".join(f"{k} {v}" for k, v in scan["counts"].items())
     print(f"scan {args.week}: {len(scan['items'])} items ({counts})")
     return 0
