@@ -136,3 +136,42 @@ def test_invalid_run_writes_nothing(tmp_path, selected):
 def test_cli(tmp_path, capsys):
     assert main([str(RUN), "--selected", str(RUN / "selected.json"), "--out", str(tmp_path / "d")]) == 0
     assert (tmp_path / "d" / "_digest.md").exists()
+
+
+# Review fixes: formula cells, stale files, slug collisions
+
+
+def test_sheet_cells_cannot_become_formulas(tmp_path, selected):
+    from scripts.render import scan_rows, sheet_cell
+
+    assert sheet_cell('=IMPORTDATA("https://x")') == '\'=IMPORTDATA("https://x")'
+    assert [sheet_cell(v) for v in ("+1", "-x", "@a", "plain", 7)] == ["'+1", "'-x", "'@a", "plain", 7]
+    hostile = json.loads(json.dumps(selected))
+    hostile["items"][0]["description"] = '=HYPERLINK("https://x")'
+    assert scan_rows(hostile)[1][5] == '\'=HYPERLINK("https://x")'
+
+
+def test_rerender_removes_stale_briefs(tmp_path, selected):
+    out = tmp_path / "drive"
+    (out / "briefs").mkdir(parents=True)
+    (out / "briefs" / "old-brief.md").write_text("stale")
+    assert render_run(RUN, selected, load_rubric(), out) == []
+    assert not (out / "briefs" / "old-brief.md").exists()
+
+
+def test_colliding_slugs_get_distinct_files(tmp_path, selected):
+    run = tmp_path / "run"
+    run.mkdir()
+    for name in ("briefs", "ideas", "scores"):
+        (run / f"{name}.json").write_text((RUN / f"{name}.json").read_text())
+    briefs = json.loads((run / "briefs.json").read_text())
+    twin = json.loads(json.dumps(briefs["briefs"][0]))
+    twin.update(id="acme-agent/1", url="https://github.com/acme-agent/1")
+    briefs["briefs"].append(twin)
+    (run / "briefs.json").write_text(json.dumps(briefs))
+    out = tmp_path / "drive"
+    assert render_run(run, None, load_rubric(), out) == []
+    assert sorted(p.name for p in (out / "briefs").iterdir() if p.name.startswith("acme")) == [
+        "acme-agent-1-2.md",
+        "acme-agent-1.md",
+    ]

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Validate a week's LLM output files against the schemas and rubric (SPEC 8).
 
-Usage: python scripts/validate.py runs/2026-W42 [--selected PATH] [--json]
+Usage: python scripts/validate.py runs/2026-W42 [--selected PATH | --no-selected] [--json]
 
 The run directory holds briefs.json, ideas.json and scores.json. --selected
-defaults to data/scans/<week>.selected.json. Every error is printed and the
+defaults to data/scans/<week>.selected.json and must exist unless
+--no-selected is given. Every error is printed and the
 exit code is 1; on success the shortlist is printed and the exit code is 0.
 """
 from __future__ import annotations
@@ -24,6 +25,7 @@ import argparse  # noqa: E402
 import json  # noqa: E402
 import re  # noqa: E402
 from collections import Counter  # noqa: E402
+from functools import lru_cache  # noqa: E402
 from pathlib import Path  # noqa: E402
 
 import yaml  # noqa: E402
@@ -39,9 +41,23 @@ TOTAL_TOLERANCE = 0.01
 # Brief fields copied verbatim from the source, so exempt from the dash rule.
 COPIED_FIELDS = {"title", "url", "evidence"}
 
+# Repo names made only of these words describe a pattern, not a product, so a
+# mechanism may use them (a repo called "browser-agent" does not ban "agent").
+GENERIC_WORDS = {
+    "agent", "agents", "ai", "app", "apps", "bench", "bot", "bots", "browser", "chat",
+    "cli", "code", "coding", "data", "dev", "eval", "evals", "game", "games", "kit", "llm",
+    "llms", "mcp", "prompt", "prompts", "rag", "server", "skill", "skills", "tool", "tools",
+    "web",
+}
+
 
 def load_schema(name: str) -> dict:
     return json.loads((SCHEMAS / f"{name}.json").read_text())
+
+
+@lru_cache(maxsize=None)
+def validator_for(name: str) -> Draft202012Validator:
+    return Draft202012Validator(load_schema(name))
 
 
 def load_rubric(path: Path = RUBRIC) -> dict:
@@ -69,9 +85,8 @@ def lens_cap(lens: str, rubric: dict) -> float:
 # Checks. Each returns a list of error strings prefixed with where they are.
 
 
-def schema_errors(instance, schema: dict, where: str) -> list[str]:
-    validator = Draft202012Validator(schema)
-    errors = sorted(validator.iter_errors(instance), key=lambda e: list(e.absolute_path))
+def schema_errors(instance, name: str, where: str) -> list[str]:
+    errors = sorted(validator_for(name).iter_errors(instance), key=lambda e: list(e.absolute_path))
     out = []
     for err in errors:
         path = "/".join(str(p) for p in err.absolute_path)
@@ -96,17 +111,27 @@ def dash_errors(obj, where: str, skip: frozenset = frozenset()) -> list[str]:
 
 
 def product_name(brief: dict) -> str | None:
-    """The repo or space name a mechanism must not mention."""
-    if brief["source"] in ("github", "hf_space"):
-        name = brief["id"].split("/")[-1]
-        return name if len(name) >= 4 else None
-    return None
+    """The repo or space name a mechanism must not mention.
+
+    None for Show HN posts, for names under 4 characters, and for names made
+    only of generic words.
+    """
+    if brief["source"] not in ("github", "hf_space"):
+        return None
+    name = brief["id"].split("/")[-1]
+    words = [w for w in re.split(r"[-_. ]+", name.lower()) if w]
+    if len(name) < 4 or all(w in GENERIC_WORDS for w in words):
+        return None
+    return name
 
 
 def names_product(mechanism: str, name: str) -> bool:
+    """True if the name appears as whole words, with or without its separators."""
     text = mechanism.lower()
-    name = name.lower()
-    return name in text or name.replace("-", " ").replace("_", " ") in text
+    for form in {name.lower(), re.sub(r"[-_.]+", " ", name.lower())}:
+        if re.search(rf"(?<![a-z0-9]){re.escape(form)}(?![a-z0-9])", text):
+            return True
+    return False
 
 
 def envelope_errors(doc, key: str, where: str) -> list[str]:
@@ -125,11 +150,10 @@ def check_briefs(doc: dict, selected: dict | None = None) -> list[str]:
     errors = envelope_errors(doc, "briefs", where)
     if errors:
         return errors
-    schema = load_schema("brief")
     seen: Counter = Counter()
     for i, brief in enumerate(doc["briefs"]):
         at = f"{where}/briefs/{i}"
-        found = schema_errors(brief, schema, at)
+        found = schema_errors(brief, "brief", at)
         errors += found
         if found:
             continue
@@ -142,6 +166,9 @@ def check_briefs(doc: dict, selected: dict | None = None) -> list[str]:
 
     skipped = doc.get("skipped", [])
     skipped_ids = set()
+    if not isinstance(skipped, list):
+        errors.append(f"{where}/skipped: must be a list")
+        skipped = []
     for i, entry in enumerate(skipped):
         at = f"{where}/skipped/{i}"
         if not (isinstance(entry, dict) and entry.get("id") and str(entry.get("reason", "")).strip()):
@@ -155,6 +182,8 @@ def check_briefs(doc: dict, selected: dict | None = None) -> list[str]:
             errors.append(f"{where}/week: {doc['week']} does not match the selected file's {selected.get('week')}")
         items = {item["id"]: item for item in selected["items"]}
         for i, brief in enumerate(doc["briefs"]):
+            if not isinstance(brief, dict):
+                continue  # already reported by the schema check
             item = items.get(brief.get("id"))
             if item is None:
                 errors.append(f"{where}/briefs/{i}: id {brief.get('id')} is not in the selected items")
@@ -176,13 +205,12 @@ def check_ideas(doc: dict, brief_ids: set[str], rubric: dict) -> list[str]:
     errors = envelope_errors(doc, "ideas", where)
     if errors:
         return errors
-    schema = load_schema("idea")
     limits = rubric["brainstorm"]
     ids: Counter = Counter()
     per_brief: Counter = Counter()
     for i, idea in enumerate(doc["ideas"]):
         at = f"{where}/ideas/{i}"
-        found = schema_errors(idea, schema, at)
+        found = schema_errors(idea, "idea", at)
         errors += found
         if found:
             continue
@@ -226,7 +254,6 @@ def check_scores(doc: dict, ideas: list[dict], rubric: dict) -> list[str]:
     errors = envelope_errors(doc, "scores", where)
     if errors:
         return errors
-    schema = load_schema("score")
     verdicts = {
         idea["idea_id"]: (idea.get("originality") or {}).get("verdict")
         for idea in ideas
@@ -235,7 +262,7 @@ def check_scores(doc: dict, ideas: list[dict], rubric: dict) -> list[str]:
     scored: Counter = Counter()
     for i, score in enumerate(doc["scores"]):
         at = f"{where}/scores/{i}"
-        found = schema_errors(score, schema, at)
+        found = schema_errors(score, "score", at)
         errors += found
         if found:
             continue
@@ -309,7 +336,9 @@ def validate_run(run_dir: Path, selected: dict | None = None, rubric: dict | Non
     errors += check_ideas(ideas, brief_ids, rubric)
     idea_list = ideas.get("ideas") if isinstance(ideas, dict) else None
     errors += check_scores(scores, idea_list if isinstance(idea_list, list) else [], rubric)
-    weeks = {doc.get("week") for doc in (briefs, ideas, scores) if isinstance(doc, dict)}
+    weeks = {
+        doc.get("week") for doc in (briefs, ideas, scores) if isinstance(doc, dict) and isinstance(doc.get("week"), str)
+    }
     if len(weeks) > 1:
         errors.append(f"week differs across files: {sorted(map(str, weeks))}")
     if errors:
@@ -324,13 +353,27 @@ def validate_run(run_dir: Path, selected: dict | None = None, rubric: dict | Non
 
 
 def default_selected(run_dir: Path) -> Path | None:
+    """data/scans/<week>.selected.json for the week in briefs.json, whether or not it exists."""
     briefs = run_dir / "briefs.json"
     try:
         week = json.loads(briefs.read_text())["week"]
     except (OSError, ValueError, KeyError, TypeError):
         return None
-    path = ROOT / "data" / "scans" / f"{week}.selected.json"
-    return path if path.exists() else None
+    if not isinstance(week, str) or not WEEK_RE.match(week):
+        return None
+    return ROOT / "data" / "scans" / f"{week}.selected.json"
+
+
+def resolve_selected(run_dir: Path, given: Path | None, skip: bool) -> tuple[dict | None, str | None]:
+    """Load the selected file, or say why it cannot be. Returns (selected, error)."""
+    if skip:
+        return None, None
+    path = given or default_selected(run_dir)
+    if path is None:
+        return None, "cannot tell the week from briefs.json, so no selected file to check against"
+    if not path.exists():
+        return None, f"selected file {path} not found; pass --selected, or --no-selected to skip the check"
+    return json.loads(path.read_text()), None
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -338,11 +381,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("run_dir", type=Path, help="directory with briefs.json, ideas.json, scores.json")
     parser.add_argument("--selected", type=Path, help="the week's .selected.json (default: from the week)")
     parser.add_argument("--rubric", type=Path, default=RUBRIC)
+    parser.add_argument("--no-selected", action="store_true", help="skip the check against the selected items")
     parser.add_argument("--json", action="store_true", help="print the shortlist as JSON")
     args = parser.parse_args(argv)
 
-    selected_path = args.selected or default_selected(args.run_dir)
-    selected = json.loads(selected_path.read_text()) if selected_path else None
+    selected, problem = resolve_selected(args.run_dir, args.selected, args.no_selected)
+    if problem:
+        print(f"FAILED: {problem}", file=sys.stderr)
+        return 1
     errors, data = validate_run(args.run_dir, selected, load_rubric(args.rubric))
     if errors:
         print(f"FAILED: {len(errors)} error(s)", file=sys.stderr)
@@ -358,7 +404,7 @@ def main(argv: list[str] | None = None) -> int:
     print(
         f"ok: {len(data['briefs']['briefs'])} briefs, {len(ideas)} ideas ({killed} killed), "
         f"{len(data['scores']['scores'])} scores"
-        + ("" if selected else "; selected file not checked")
+        + ("" if selected else "; selected items not checked (--no-selected)")
     )
     if not data["shortlist"]:
         print("shortlist: none at or above the threshold")

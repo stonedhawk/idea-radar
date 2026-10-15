@@ -28,13 +28,14 @@ if _ROOT not in sys.path:
 import argparse  # noqa: E402
 import json  # noqa: E402
 import re  # noqa: E402
+import shutil  # noqa: E402
 from pathlib import Path  # noqa: E402
 
 from scripts.validate import (  # noqa: E402
     DASHES,
     RUBRIC,
-    default_selected,
     load_rubric,
+    resolve_selected,
     validate_run,
 )
 
@@ -69,6 +70,17 @@ def clean(text) -> str:
     """Source titles can carry en or em dashes; our copy never does."""
     text = "" if text is None else str(text)
     return DASHES.sub("-", text)
+
+
+def sheet_cell(value):
+    """Keep text from being read as a formula when written to Sheets as user input.
+
+    Scan text and model output are untrusted; a leading apostrophe makes Sheets
+    store the cell as plain text and is not shown.
+    """
+    if isinstance(value, str) and value[:1] in ("=", "+", "-", "@"):
+        return "'" + value
+    return value
 
 
 def one_line(text) -> str:
@@ -295,8 +307,9 @@ def backlog_rows(week: str, data: dict, rubric: dict) -> list[list]:
             "stars_30d": "",
             "notes": f"lens: {s['lens']}",
         }
-        rows.append([row[col] for col in BACKLOG_COLUMNS])
-    rows.sort(key=lambda r: (-r[BACKLOG_COLUMNS.index("total")], r[1]))
+        rows.append([sheet_cell(row[col]) for col in BACKLOG_COLUMNS])
+    total, idea_id = BACKLOG_COLUMNS.index("total"), BACKLOG_COLUMNS.index("idea_id")
+    rows.sort(key=lambda r: (-r[total], r[idea_id]))
     return rows
 
 
@@ -304,7 +317,8 @@ def scan_rows(selected: dict) -> list[list]:
     rows = [SCAN_COLUMNS]
     for item in selected["items"]:
         row = {**item, "week": selected["week"], "topics": ", ".join(item.get("topics", []))}
-        rows.append(["" if row.get(col) is None else (clean(row[col]) if isinstance(row[col], str) else row[col]) for col in SCAN_COLUMNS])
+        cells = ["" if row.get(col) is None else row[col] for col in SCAN_COLUMNS]
+        rows.append([sheet_cell(clean(c)) if isinstance(c, str) else c for c in cells])
     return rows
 
 
@@ -320,7 +334,11 @@ def render_run(run_dir: Path, selected: dict | None, rubric: dict, out: Path) ->
 
     files: dict[str, str] = {}
     for brief in data["briefs"]["briefs"]:
-        files[f"briefs/{slug(brief)}.md"] = render_brief(brief, items.get(brief["id"]), ideas, scores)
+        name, n = slug(brief), 1
+        while f"briefs/{name}.md" in files:  # distinct ids can share a slug
+            n += 1
+            name = f"{slug(brief)}-{n}"
+        files[f"briefs/{name}.md"] = render_brief(brief, items.get(brief["id"]), ideas, scores)
     files["_digest.md"] = render_digest(week, data, selected, rubric)
     files["archive.md"] = render_archive(week, data, rubric)
     files["backlog_rows.json"] = json.dumps(backlog_rows(week, data, rubric), indent=2, ensure_ascii=False) + "\n"
@@ -330,6 +348,9 @@ def render_run(run_dir: Path, selected: dict | None, rubric: dict, out: Path) ->
     leaked = [name for name, text in files.items() if DASHES.search(text)]
     if leaked:
         return [f"{name}: rendered text contains an en or em dash" for name in leaked]
+    # Clear what an earlier render wrote, so a brief that has since been
+    # dropped or renamed is not uploaded again.
+    shutil.rmtree(out / "briefs", ignore_errors=True)
     for name, text in files.items():
         path = out / name
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -342,11 +363,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("run_dir", type=Path)
     parser.add_argument("--selected", type=Path, help="the week's .selected.json (default: from the week)")
     parser.add_argument("--rubric", type=Path, default=RUBRIC)
+    parser.add_argument("--no-selected", action="store_true", help="skip the check against the selected items")
     parser.add_argument("--out", type=Path, help="output directory (default: <run_dir>/drive)")
     args = parser.parse_args(argv)
 
-    selected_path = args.selected or default_selected(args.run_dir)
-    selected = json.loads(selected_path.read_text()) if selected_path else None
+    selected, problem = resolve_selected(args.run_dir, args.selected, args.no_selected)
+    if problem:
+        print(f"FAILED: {problem}; nothing written", file=sys.stderr)
+        return 1
     out = args.out or args.run_dir / "drive"
     errors = render_run(args.run_dir, selected, load_rubric(args.rubric), out)
     if errors:

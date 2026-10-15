@@ -466,3 +466,63 @@ def test_rubric_file_is_what_the_spec_says():
     }
     assert rubric["shortlist"] == {"threshold": 70, "max_ideas": 3}
     assert rubric["lens"] == {"gaming_x_ai_pm": 5, "gaming_only": 4, "ai_pm_only": 2, "neither": 0}
+
+
+# Review fixes: malformed input, product names, the selected file
+
+
+def test_validator_is_built_once_per_schema():
+    from scripts.validate import validator_for
+
+    assert validator_for("idea") is validator_for("idea")
+
+
+@pytest.mark.parametrize(
+    "mutate, expected",
+    [
+        (lambda b: b.update(skipped=None), "briefs.json/skipped: must be a list"),
+        (lambda b: b["briefs"].append("not a brief"), "briefs.json/briefs/3: 'not a brief' is not of type 'object'"),
+    ],
+    ids=["null-skipped", "string-brief"],
+)
+def test_malformed_briefs_are_reported_not_raised(run, mutate, expected):
+    briefs = copy.deepcopy(run["briefs"])
+    mutate(briefs)
+    assert expected in check_briefs(briefs, run["selected"])
+
+
+def test_unhashable_week_is_reported_not_raised(run, run_dir, rubric):
+    run["ideas"]["week"] = ["2026-W42"]
+    errors, _ = validate_run(run_dir(), run["selected"], rubric)
+    assert "ideas.json/week: must be an ISO week like 2026-W42" in errors
+
+
+@pytest.mark.parametrize(
+    "repo, mechanism, flagged",
+    [
+        ("someone/browser-agent", "An agent drives a real browser from a plain-language task.", False),
+        ("someone/agents", "Several agents split a task and merge their results.", False),
+        ("someone/tally", "A counter totally replaces the manual count of votes.", False),
+        ("someone/tally", "Tally counts votes from a shared sheet.", True),
+        ("someone/deepseek-harness", "A plugin core like deepseek harness, minus the brand.", True),
+    ],
+)
+def test_product_name_check(run, repo, mechanism, flagged):
+    briefs = copy.deepcopy(run["briefs"])
+    brief = briefs["briefs"][0]
+    brief.update(id=repo, url=f"https://github.com/{repo}", mechanism=mechanism)
+    errors = [e for e in check_briefs(briefs) if "names the product" in e]
+    assert bool(errors) is flagged
+
+
+def test_cli_fails_when_the_selected_file_is_missing(run, run_dir, capsys):
+    run["briefs"]["week"] = run["ideas"]["week"] = run["scores"]["week"] = "1999-W01"
+    for idea in run["ideas"]["ideas"]:
+        idea["idea_id"] = idea["idea_id"].replace("2026-W42", "1999-W01")
+    for score in run["scores"]["scores"]:
+        score["idea_id"] = score["idea_id"].replace("2026-W42", "1999-W01")
+    path = run_dir()
+    assert main([str(path)]) == 1
+    assert "1999-W01.selected.json not found" in capsys.readouterr().err
+    assert main([str(path), "--no-selected"]) == 0
+    assert "selected items not checked (--no-selected)" in capsys.readouterr().out
