@@ -1,7 +1,7 @@
 # idea-radar: AUDIT (draft)
 
 Repo: `stonedhawk/idea-radar`
-Commit audited: draft against branch `feat/m4-audit-readme`, based on main at f8c1678. Re-run on the commit on main that goes public.
+Commit audited: draft, last updated against main at 2a7bee8. Re-run on the commit on main that goes public.
 Audited on: 2026-10-15
 Auditor: Claude Code (Opus 5.5), for Rahul M Shah
 
@@ -9,13 +9,13 @@ Auditor: Claude Code (Opus 5.5), for Rahul M Shah
 
 ## Verdict
 
-**BLOCKED** on checks 8, 9, 10 and 11, and on the About line and topic rows of check 1. Every row that can pass before the repo goes public passes. What is left is listed under "Fixes before ship".
+**BLOCKED** on checks 8, 10 and 11. Every row that can pass before the repo goes public passes. What is left is listed under "Fixes before ship".
 
 ## Checks
 
 | # | Check | Pass condition | Result | Evidence |
 |---|---|---|---|---|
-| 1 | Claims | Every claim in README, About line and topics traces to a file. Recorded as a claim, evidence, action table. No unmeasured outcomes, no superlatives. | open | README rows all keep (see check 1 table). About line and topics are not set yet; proposed values are in the table and are set after this audit. |
+| 1 | Claims | Every claim in README, About line and topics traces to a file. Recorded as a claim, evidence, action table. No unmeasured outcomes, no superlatives. | pass | Every row keeps (see check 1 table). About line and topics were set on 2026-10-15 to the values in the table; `gh repo view stonedhawk/idea-radar --json description,repositoryTopics` returns them. |
 | 2 | Numbers | Any maths is checked by an independent script against 3 or more worked examples. | pass | `python scripts/check_maths.py`: 16 of 16 hand-worked examples match (8 velocity, 4 measured and 4 estimated; 5 score totals; 3 lens caps). `tests/test_check_maths.py` runs it in CI and shows it fails when a weight or the velocity window changes. |
 | 3 | Data flows | Every place data leaves the user's machine is listed, and the docs match the code. | pass | See check 3 table. Every row is in README "What leaves your machine" (README.md:37-45). |
 | 4 | Defaults | Local servers bind to localhost. Third-party telemetry is off. | n/a | No server: nothing in `collectors/` or `scripts/` opens a listening socket. No analytics or telemetry SDK: `requirements.txt` is PyYAML and jsonschema only, and the only HTTP client is `urllib.request` in `collectors/common.py:50,76`. |
@@ -23,9 +23,9 @@ Auditor: Claude Code (Opus 5.5), for Rahul M Shah
 | 6 | Prompt tools | A required-rules test and a length test (7,500 characters or less, so it pastes into ChatGPT). Minimal input runs without halting. Tested at least 3 times each in the Claude and ChatGPT apps, graded by the repo's checker. Pass rate recorded; misses go under Known limitations. | pass | See check 6 table. Required rules and length: `tests/test_prompts.py` for all five prompts. Minimal input and chat-app runs are n/a: these prompts run inside the weekly Claude task and Claude Code on the week's scan files, never pasted into a chat app by a user with their own input. |
 | 7 | Packages | The README never documents an unpublished version. Trusted publishing, a tag-equals-version check, and publish before the GitHub release. | n/a | Not published to any package index. The quickstart installs from `requirements.txt` in a clone. |
 | 8 | Demo | Loads with no console errors. GitHub Pages URL set in the repo's Website field when one exists. | open | No web demo and no Pages site, so the console and Website parts are n/a. SPEC 15 M4 needs a GIF of a real weekly digest at `docs/demo.gif`; README.md:5 is a placeholder until the 2026-10-19 digest is recorded. |
-| 9 | Copy | No em or en dashes. LICENSE names "Rahul M Shah". About line 200 characters or less. Topics include `liveops-tools` when the tool is for producers. | open | Dashes and LICENSE pass: `tests/test_copy.py` checks every text file we wrote (all of them except `data/scans/`, which keeps third-party titles as published; 2026-W42.json has 82 dashes and 2026-W42.selected.json has 1, all in source titles and descriptions). LICENSE:3 is "Copyright (c) 2026 Rahul M Shah". About line and topics are not set yet. |
-| 10 | Secrets | No keys in the repo or its history. `.env` gitignored. | open | `gitleaks git --log-opts="--all" --redact` (gitleaks 8.30.1, 2026-10-15): 11 commits scanned, no leaks found. `.gitignore:5` is `.env` and `git check-ignore -v .env` confirms it. Open: four commits on main (f7e7a6b, 0ee2418, ad2fbb1, f8c1678) are authored with a personal email address rather than the GitHub noreply address; that address becomes public with the history. History is left alone; the owner decides. |
-| 11 | Portfolio | The card in `stonedhawk/rahul-m-shah-portfolio`, `content/tools/`, is written from the README on main after the audit PR merges, with `inspiredBy` crediting the source. | open | Written after this PR merges, from README.md on main. |
+| 9 | Copy | No em or en dashes. LICENSE names "Rahul M Shah". About line 200 characters or less. Topics include `liveops-tools` when the tool is for producers. | pass | Dashes and LICENSE pass: `tests/test_copy.py` checks every text file we wrote (all of them except `data/scans/`, which keeps third-party titles as published; 2026-W42.json has 82 dashes and 2026-W42.selected.json has 1, all in source titles and descriptions). LICENSE:3 is "Copyright (c) 2026 Rahul M Shah". About line is 165 characters and topics include `liveops-tools`, both set on 2026-10-15. |
+| 10 | Secrets | No keys in the repo or its history. `.env` gitignored. | open | `gitleaks git --log-opts="--all" --redact` (gitleaks 8.30.1, 2026-10-15): 11 commits scanned, no leaks found. `.gitignore:5` is `.env` and `git check-ignore -v .env` confirms it. Open: every squash merge on main so far (five as of 2a7bee8: f7e7a6b, 0ee2418, ad2fbb1, f8c1678, 2a7bee8) is authored with a personal email address rather than the GitHub noreply address, because GitHub squash merges use the account's commit email; each merge before the setting changes adds one. Owner's decision, 2026-10-15: turn on "Keep my email private" in GitHub, then rewrite these authors to the noreply address and force-push main right before the repo goes public, after the last pre-launch merge. |
+| 11 | Portfolio | The card in `stonedhawk/rahul-m-shah-portfolio`, `content/tools/`, is written from the README on main after the audit PR merges, with `inspiredBy` crediting the source. | open | Card written from README.md on main at 2a7bee8: `content/tools/idea-radar.json` in draft PR stonedhawk/rahul-m-shah-portfolio#20, build and tests pass. `inspiredBy` is n/a: idea-radar is not built from a source repo, and README.md:58 credits only its data APIs. Merges when the repo goes public, since the card links to it. |
 
 ## Check 1: claims
 
@@ -49,8 +49,8 @@ Auditor: Claude Code (Opus 5.5), for Rahul M Shah
 | Limitations (README.md:49-54) | Velocity: `scripts/scan.py:88-91`. Product Hunt: SPEC 6.1 and 17.1. Claude account with Drive and Sheets: SPEC 5 and Appendix A step 8. Topics only: `collectors/github.py:31-37`. validate.py scope: `scripts/validate.py` checks schema, rubric and dashes only. Prompts not graded across runs: check 6. | keep |
 | Credits: data sources; no code was copied (README.md:58) | `collectors/github.py:14`, `collectors/hn.py:10`, `collectors/hf.py:12`. Repo history from 4675264 contains only this project's own code. | keep |
 | License: MIT, Rahul M Shah (README.md:62) | LICENSE:1-3. | keep |
-| About line (not set). Proposed, 165 characters: "Weekly radar of what is gaining traction in developer and AI tools, turned into tool ideas for game and AI product teams. Scan in GitHub Actions, judgment in Claude." | Same claims as the README hook and stages 1 to 3. | set after audit |
-| Topics (not set). Proposed: `liveops-tools`, `game-development`, `product-management`, `github-actions`, `hacker-news`, `huggingface`, `claude`, `trend-analysis` | `liveops-tools`, `game-development`, `product-management`: `prompts/brainstorm.md:3`. `github-actions`: `.github/workflows/`. `hacker-news`: `collectors/hn.py`. `huggingface`: `collectors/hf.py`. `claude`: SPEC 8 weekly task. `trend-analysis`: velocity and traction ranking, `scripts/scan.py:68`, `scripts/select.py:100`. | set after audit |
+| About line (set 2026-10-15), 165 characters: "Weekly radar of what is gaining traction in developer and AI tools, turned into tool ideas for game and AI product teams. Scan in GitHub Actions, judgment in Claude." | Same claims as the README hook and stages 1 to 3. | keep |
+| Topics (set 2026-10-15): `liveops-tools`, `game-development`, `product-management`, `github-actions`, `hacker-news`, `huggingface`, `claude`, `trend-analysis` | `liveops-tools`, `game-development`, `product-management`: `prompts/brainstorm.md:3`. `github-actions`: `.github/workflows/`. `hacker-news`: `collectors/hn.py`. `huggingface`: `collectors/hf.py`. `claude`: SPEC 8 weekly task. `trend-analysis`: velocity and traction ranking, `scripts/scan.py:68`, `scripts/select.py:100`. | keep |
 
 ## Check 2: worked examples
 
@@ -130,7 +130,6 @@ The end-to-end evidence that the four weekly prompts run without halting is the 
 ## Fixes before ship
 
 - Check 8: record `docs/demo.gif` from the real Monday 2026-10-19 digest and commit it; keep the alt text in README.md:5 true to what the GIF shows.
-- Check 1 and 9: after merge, set the About line and topics proposed above (About line is 165 characters; topics include `liveops-tools`), then mark their rows keep.
-- Check 10: decide on the four main commits authored with a personal email address (f7e7a6b, 0ee2418, ad2fbb1, f8c1678). Either accept that the address becomes public, or rewrite history before the repo goes public. Gitleaks is clean either way.
-- Check 11: write the portfolio card from README.md on main after this PR merges, in `stonedhawk/rahul-m-shah-portfolio`, `content/tools/`.
+- Check 10: turn on "Keep my email private" in GitHub email settings (owner). Then, right before going public and after the last pre-launch merge, list every main commit still authored with the personal address (`git log --format='%h %ae' main`), rewrite those authors to the noreply address with a mailmap, force-push main, and re-run gitleaks on the rewritten history.
+- Check 11: add `media` with the demo GIF to the card in stonedhawk/rahul-m-shah-portfolio#20 if it is ready, then merge it when the repo goes public.
 - Then: re-run `gitleaks git --log-opts="--all"`, `python scripts/check_maths.py` and `pytest` on the main commit, fill in "Commit audited", move this file to Drive `05_Audit/idea-radar/AUDIT.md`, and make the repo public.
