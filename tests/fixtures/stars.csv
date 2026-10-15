@@ -1,0 +1,11 @@
+week,date,repo,stars
+2026-W40,2026-10-01,acme/agent-kit,100
+2026-W41,2026-10-08,acme/agent-kit,400
+2026-W41,2026-10-09,acme/two-snapshots,500
+2026-W41,2026-10-05,acme/two-snapshots,400
+2026-W38,2026-09-17,acme/stale,100
+2026-W41,2026-10-11,acme/too-recent,100
+2026-W41,2026-10-10,acme/edge-5,100
+2026-W41,2026-10-05,acme/edge-10,100
+2026-W41,2026-10-04,acme/edge-11,100
+2026-W42,2026-10-15,acme/agent-kit,650
