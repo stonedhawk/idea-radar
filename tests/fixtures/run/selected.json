@@ -1,0 +1,13 @@
+{
+  "week": "2026-W42",
+  "generated_at": "2026-10-12T01:40:00Z",
+  "scan": "2026-W42.json",
+  "quotas": {"github": 1, "show_hn": 1, "hf_space": 1},
+  "skipped": {},
+  "items": [
+    {"source": "github", "id": "acme/agent-1", "url": "https://github.com/acme/agent-1", "title": "agent-1", "description": "agent-1 fixture", "topics": ["ai-agents"], "language": "Python", "license": "MIT", "traction": 1000.0, "traction_kind": "velocity_7d_measured", "created_at": "2026-01-01T00:00:00Z", "fetched_at": "2026-10-12T01:30:00Z", "primary_topic": "ai-agents", "stars": 1000, "fork": false, "archived": false},
+    {"source": "show_hn", "id": "9003", "url": "https://news.ycombinator.com/item?id=9003", "title": "Show HN: A to-do list that plans your week", "description": "", "topics": [], "language": null, "license": null, "traction": 100.0, "traction_kind": "hn_points", "created_at": "2026-10-10T12:00:00Z", "fetched_at": "2026-10-12T01:30:00Z", "link": "https://example.com/9003"},
+    {"source": "hf_space", "id": "org/level-designer", "url": "https://huggingface.co/spaces/org/level-designer", "title": "Level Designer", "description": "", "topics": ["gradio"], "language": null, "license": null, "traction": 100.0, "traction_kind": "hf_trending", "created_at": "2026-09-01T00:00:00Z", "fetched_at": "2026-10-12T01:30:00Z"},
+    {"source": "hf_space", "id": "org/face-swap-demo", "url": "https://huggingface.co/spaces/org/face-swap-demo", "title": "Face swap demo", "description": "", "topics": [], "language": null, "license": null, "traction": 90.0, "traction_kind": "hf_trending", "created_at": "2026-09-01T00:00:00Z", "fetched_at": "2026-10-12T01:30:00Z"}
+  ]
+}
