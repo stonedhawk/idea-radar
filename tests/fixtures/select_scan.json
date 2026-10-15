@@ -1,6 +1,11 @@
 {
   "week": "2026-W42",
   "generated_at": "2026-10-12T01:30:00Z",
+  "counts": {
+    "github": 26,
+    "show_hn": 3,
+    "hf_space": 6
+  },
   "items": [
     {
       "source": "github",
