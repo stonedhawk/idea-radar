@@ -82,6 +82,7 @@ Every item must hold. Fix and re-check; do not write a file that fails one.
 - The About line is 200 characters or less.
 - No superlatives and no outcomes nobody has measured ("saves hours", "the best", "10x").
 - No source code was copied from the source repo; the credit says so.
+- `SPEC.md` section 11 keeps the RTK requirement from the template, unchanged.
 
 ## 5. Write to Drive
 

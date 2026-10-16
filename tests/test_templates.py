@@ -72,6 +72,9 @@ def test_spec_template_sets_up_the_repo_like_spec_10():
     text = template("SPEC")
     assert "`CLAUDE.md`, `AGENTS.md` and `GEMINI.md`: one line each, \"Read SPEC.md first.\"" in text
     assert "Rahul M Shah" in text
+    repo_setup = text.split("## 11. Repo setup", 1)[1].split("## 12.", 1)[0]
+    assert "RTK is required for every agent session" in repo_setup
+    assert "rtk init" in repo_setup
 
 
 def test_readme_template_has_what_spec_9_requires():

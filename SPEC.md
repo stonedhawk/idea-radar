@@ -264,7 +264,7 @@ When the repo is created, these move into it and the Drive copies become read-on
 
 ## 10. Stage 5: Build
 
-Out of scope for automation. The repo gets `CLAUDE.md`, `AGENTS.md` and `GEMINI.md`, each a single line pointing to `SPEC.md`, so any agent starts from the same spec.
+Out of scope for automation. The repo gets `CLAUDE.md`, `AGENTS.md` and `GEMINI.md`, each a single line pointing to `SPEC.md`, so any agent starts from the same spec. Every agent that builds the repo runs its shell commands through RTK (https://github.com/rtk-ai/rtk); the setup is in `templates/SPEC.template.md` section 11.
 
 ## 11. Stage 6: Audit gate (required)
 
