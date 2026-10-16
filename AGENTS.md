@@ -21,6 +21,7 @@ This is the one instruction file for every agent that works in this repo. Codex 
 - `data/scans/` and `data/stars.csv` are written by the scan workflow. Do not edit them by hand.
 - `runs/` is working space and gitignored. Never commit it, and never commit tokens or `.env` files.
 - Work on a branch and open a PR. Do not push to `main` or merge without the owner's OK.
+- Run shell commands through RTK (https://github.com/rtk-ai/rtk). Set it up once per machine with `rtk init` and your agent's flag (`-g` for Claude Code, `-g --codex`, `-g --gemini`, `-g --agent antigravity`); without a hook, prefix commands with `rtk`. A scheduled cloud run where RTK is not installed may skip it. Every repo specced from `templates/SPEC.template.md` requires it too.
 - The schemas are the contract between steps. If you change one, change its check, its tests and the table below in the same PR.
 
 ## Step contracts
