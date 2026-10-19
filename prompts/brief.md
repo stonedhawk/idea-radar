@@ -10,7 +10,12 @@ For each selected item, read the source before writing anything:
 - `show_hn`: the post and its text from `https://hn.algolia.com/api/v1/items/{id}`, and the page the post links to (the item's `link` field) if there is one.
 - `hf_space`: `https://huggingface.co/api/spaces/{id}` and the Space's README at `https://huggingface.co/spaces/{id}/raw/main/README.md`.
 
-Use only what you read. If you cannot read enough to state the mechanism, skip the item (see below) instead of guessing.
+If a source will not load (a blocked host, a timeout, an error page), try these in order before you give up on it:
+
+1. A browser tool, if your agent has one: a browser extension or in-app browser it controls, or a headless browser in the shell. Open the same URL and read the page text.
+2. The source's own GitHub repo, if the post, page or Space names one: read its README as for a `github` item and add the repo URL to `evidence`.
+
+Use only what you read. If you still cannot read enough to state the mechanism, skip the item (see below) instead of guessing, and say in the skip reason which routes you tried, so the next run knows the item may be briefable with better access.
 
 ## Output
 
