@@ -66,6 +66,7 @@ Do not commit or push anything during a weekly run.
 | Shell and Python 3.12 | every step | nothing runs |
 | GitHub read access: `gh` logged in, or `GITHUB_TOKEN` for `api.github.com` | steps 1 to 3 and 5 | unauthenticated search allows 10 requests a minute; sleep 7 seconds between calls |
 | A web search tool | step 5, two web searches per idea | stop and report; never invent searches or evidence |
+| Web page access beyond GitHub: `hn.algolia.com`, `huggingface.co` and the pages Show HN posts link to | step 3, reading `show_hn` and `hf_space` sources | try a browser tool, then the source's GitHub repo if it names one (`prompts/brief.md`); otherwise skip the item and say what was tried. A cloud environment's network policy blocks every tool alike, including a headless browser, so widen the policy instead |
 | Google Drive and Sheets tools | publishing, tracking and the spec step | `publish.py --local DIR` writes the same layout as plain files and CSV |
 
 ## Provider-specific parts
