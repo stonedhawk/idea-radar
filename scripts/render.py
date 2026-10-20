@@ -64,12 +64,23 @@ MOVES = {
     4: "invert",
 }
 JOIN = " ; "
+# Every file render writes, so a re-render clears all of them first.
+OUTPUTS = ("briefs", "_digest.md", "archive.md", "backlog_rows.json", "scan_rows.json")
 
 
 def clean(text) -> str:
     """Source titles can carry en or em dashes; our copy never does."""
     text = "" if text is None else str(text)
     return DASHES.sub("-", text)
+
+
+def link(url) -> str:
+    """A copied URL with its en and em dashes percent-encoded: the same address, no dash characters.
+
+    validate.py exempts copied URLs from the dash rule, and turning the dash
+    into a hyphen would point somewhere else.
+    """
+    return DASHES.sub(lambda m: "".join(f"%{b:02X}" for b in m.group().encode()), str(url))
 
 
 def sheet_cell(value):
@@ -117,7 +128,7 @@ def dropped_ids(data: dict, rubric: dict) -> set[str]:
 
 def render_brief(brief: dict, item: dict | None, ideas: list[dict], scores: dict) -> str:
     lines = [f"# {one_line(brief['title'])}", ""]
-    meta = f"Source: {brief['source']}, {brief['url']}"
+    meta = f"Source: {brief['source']}, {link(brief['url'])}"
     if item is not None:
         meta += f", traction {item['traction']:g} ({item['traction_kind']})"
     lines += [meta, ""]
@@ -133,7 +144,7 @@ def render_brief(brief: dict, item: dict | None, ideas: list[dict], scores: dict
         "## Evidence",
         "",
     ]
-    lines += [f"- {url}" for url in brief["evidence"]]
+    lines += [f"- {link(url)}" for url in brief["evidence"]]
     mine = [i for i in ideas if brief["id"] in i["source_ids"]]
     if mine:
         lines += ["", "## Ideas from this brief", ""]
@@ -160,7 +171,7 @@ def sources_line(idea: dict, briefs: dict) -> str:
     parts = []
     for sid in idea["source_ids"]:
         b = briefs[sid]
-        parts.append(f"[{one_line(b['title'])}]({b['url']})")
+        parts.append(f"[{one_line(b['title'])}]({link(b['url'])})")
     return ", ".join(parts)
 
 
@@ -234,7 +245,7 @@ def render_digest(week: str, data: dict, selected: dict | None, rubric: dict) ->
                 lines.append(f"- {idea['idea_id']} {one_line(idea['title'])}: {one_line(scores[idea['idea_id']]['criteria']['lens_fit']['reason'])}")
     lines += ["", "## Briefs", ""]
     for brief in data["briefs"]["briefs"]:
-        lines.append(f"- [{one_line(brief['title'])}]({brief['url']}): {one_line(brief['mechanism'])}")
+        lines.append(f"- [{one_line(brief['title'])}]({link(brief['url'])}): {one_line(brief['mechanism'])}")
     skipped = data["briefs"].get("skipped", [])
     if skipped:
         lines += ["", "## Skipped items", ""]
@@ -288,7 +299,7 @@ def backlog_rows(week: str, data: dict, rubric: dict) -> list[list]:
             "one_liner": one_line(idea["one_liner"]),
             "target_user": one_line(idea["target_user"]),
             "move": idea["move"],
-            "source_urls": JOIN.join(briefs[sid]["url"] for sid in idea["source_ids"]),
+            "source_urls": JOIN.join(link(briefs[sid]["url"]) for sid in idea["source_ids"]),
             "originality": orig["verdict"],
             "differentiator": one_line(orig["differentiator"]),
             "evidence_urls": JOIN.join(orig["evidence_urls"]),
@@ -316,7 +327,7 @@ def backlog_rows(week: str, data: dict, rubric: dict) -> list[list]:
 def scan_rows(selected: dict) -> list[list]:
     rows = [SCAN_COLUMNS]
     for item in selected["items"]:
-        row = {**item, "week": selected["week"], "topics": ", ".join(item.get("topics", []))}
+        row = {**item, "week": selected["week"], "url": link(item["url"]), "topics": ", ".join(item.get("topics", []))}
         cells = ["" if row.get(col) is None else row[col] for col in SCAN_COLUMNS]
         rows.append([sheet_cell(clean(c)) if isinstance(c, str) else c for c in cells])
     return rows
@@ -349,8 +360,14 @@ def render_run(run_dir: Path, selected: dict | None, rubric: dict, out: Path) ->
     if leaked:
         return [f"{name}: rendered text contains an en or em dash" for name in leaked]
     # Clear what an earlier render wrote, so a brief that has since been
-    # dropped or renamed is not uploaded again.
-    shutil.rmtree(out / "briefs", ignore_errors=True)
+    # dropped or renamed, or scan rows from a run with --selected, are not
+    # uploaded again.
+    for name in OUTPUTS:
+        path = out / name
+        if path.is_dir():
+            shutil.rmtree(path)
+        elif path.exists():
+            path.unlink()
     for name, text in files.items():
         path = out / name
         path.parent.mkdir(parents=True, exist_ok=True)

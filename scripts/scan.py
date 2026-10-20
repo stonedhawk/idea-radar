@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 """Run every collector and write data/scans/<week>.json (SPEC section 6).
 
-Usage: GITHUB_TOKEN=... python scripts/scan.py [--week 2026-W42]
+Usage: GITHUB_TOKEN=... python scripts/scan.py [--week 2026-W42] [--allow-other-week]
 
 Also appends this scan's GitHub star counts to data/stars.csv. Re-running a
-week replaces that week's rows instead of adding duplicates. The scan is
+week replaces that week's rows instead of adding duplicates. The APIs only
+return today's data, so --week must be this ISO week (UTC): for any other
+week the rows would carry today's date and replace that week's real
+snapshots, which skews later velocity. --allow-other-week overrides this,
+for a deliberate backfill only. The scan is
 checked against schemas/scan.json before anything is written; on a failed
 request or a failed check nothing is written and the exit code is 1.
 """
@@ -171,7 +175,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--week", default=iso_week(now.date()), help="ISO week, e.g. 2026-W42 (default: this week, UTC)")
     parser.add_argument("--config", type=Path, default=ROOT / "config" / "sources.yaml")
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data")
+    parser.add_argument(
+        "--allow-other-week",
+        action="store_true",
+        help="scan for a week other than this one; its star rows get today's date and replace that week's",
+    )
     args = parser.parse_args(argv)
+
+    this_week = iso_week(now.date())
+    if args.week != this_week and not args.allow_other_week:
+        parser.error(
+            f"--week {args.week} is not this week ({this_week}); today's data would replace that week's "
+            "star snapshots. Pass --allow-other-week to do it anyway"
+        )
 
     token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
     if not token:

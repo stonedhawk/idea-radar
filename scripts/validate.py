@@ -290,19 +290,22 @@ def check_scores(doc: dict, ideas: list[dict], rubric: dict) -> list[str]:
 def shortlist(ideas: list[dict], scores: list[dict], rubric: dict) -> list[dict]:
     """Ideas at or above the threshold, highest total first, capped at max_ideas.
 
-    Killed ideas and dropped lenses never make it. Ties break on idea_id.
+    Killed ideas and dropped lenses never make it. Ties break on idea_id. The
+    total is the one the criteria give, not the written one, which check_score
+    lets differ by up to TOTAL_TOLERANCE.
     """
     by_id = {idea["idea_id"]: idea for idea in ideas}
     rule = rubric["shortlist"]
+    total = {s["idea_id"]: compute_total(s["criteria"], rubric) for s in scores}
     eligible = [
         s
         for s in scores
         if s["idea_id"] in by_id
         and by_id[s["idea_id"]]["originality"]["verdict"] != "killed"
         and s["lens"] not in rubric["dropped_lenses"]
-        and s["total"] >= rule["threshold"]
+        and total[s["idea_id"]] >= rule["threshold"]
     ]
-    eligible.sort(key=lambda s: (-s["total"], s["idea_id"]))
+    eligible.sort(key=lambda s: (-total[s["idea_id"]], s["idea_id"]))
     return [{"idea": by_id[s["idea_id"]], "score": s} for s in eligible[: rule["max_ideas"]]]
 
 
@@ -324,6 +327,8 @@ def validate_run(run_dir: Path, selected: dict | None = None, rubric: dict | Non
     """Validate briefs.json, ideas.json and scores.json in run_dir.
 
     Returns (errors, data) where data holds the parsed files and the shortlist.
+    In data, each score's total is the one its criteria give, so the shortlist,
+    digest and backlog rows never use a written total that is slightly off.
     """
     rubric = rubric or load_rubric()
     errors: list[str] = []
@@ -346,6 +351,8 @@ def validate_run(run_dir: Path, selected: dict | None = None, rubric: dict | Non
         errors.append(f"week differs across files: {sorted(map(str, weeks))}")
     if errors:
         return errors, None
+    for score in scores["scores"]:
+        score["total"] = compute_total(score["criteria"], rubric)
     data = {
         "briefs": briefs,
         "ideas": ideas,

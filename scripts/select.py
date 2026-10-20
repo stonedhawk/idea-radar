@@ -118,6 +118,8 @@ def select_items(
     """Return (selected items in quota order, skip counts by reason).
 
     Non-GitHub sources fill first; any quota they cannot fill goes to GitHub.
+    An id already picked from another source is skipped: a GitHub repo and an
+    HF Space can share owner/name, and briefs and ideas key items by id alone.
     """
     quotas: dict[str, int] = cfg["select"]["quotas"]
     cap: int = cfg["select"]["diversity_cap"]
@@ -138,12 +140,16 @@ def select_items(
         pool.sort(key=rank_key)
 
     per_topic: Counter = Counter()
+    taken: set[str] = set()
 
     def fill(source: str, n: int) -> list[dict]:
         picked: list[dict] = []
         for item in pools[source]:
             if len(picked) >= n:
                 break
+            if item["id"] in taken:
+                skipped["duplicate_id"] += 1
+                continue
             topic = item.get("primary_topic")
             if topic and per_topic[topic] >= cap:
                 skipped["diversity_cap"] += 1
@@ -152,6 +158,7 @@ def select_items(
                 skipped["no_readme"] += 1
                 continue
             picked.append(item)
+            taken.add(item["id"])
             if topic:
                 per_topic[topic] += 1
         return picked

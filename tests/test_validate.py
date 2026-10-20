@@ -376,6 +376,22 @@ def test_shortlist_threshold_is_inclusive(rubric, run):
     assert [e["idea"]["idea_id"] for e in shortlist(ideas, [at, below], rubric)] == ["2026-W42-01"]
 
 
+def test_shortlist_uses_the_computed_total_not_the_written_one(rubric, run):
+    ideas = run["ideas"]["ideas"]
+    # 25 + 20 + 15 + 0 + 0 + 10 = 70, written a hair under: inside the tolerance
+    at = make_score("2026-W42-01", "gaming_x_ai_pm", rubric, lens_fit=5, rahul_edge=5, build_size=5, distribution=5)
+    at["total"] = 69.995
+    assert score_errors(at, rubric, ideas) == []
+    assert [e["idea"]["idea_id"] for e in shortlist(ideas, [at], rubric)] == ["2026-W42-01"]
+
+
+def test_validate_run_replaces_written_totals_with_computed_ones(rubric, run, run_dir):
+    run["scores"]["scores"][0]["total"] += 0.005
+    errors, data = validate_run(run_dir(), run["selected"], rubric)
+    assert errors == []
+    assert all(s["total"] == compute_total(s["criteria"], rubric) for s in data["scores"]["scores"])
+
+
 def test_shortlist_drops_neither_lens_and_killed_ideas(rubric, run):
     ideas = run["ideas"]["ideas"]
     neither = make_score("2026-W42-05", "neither", rubric, **({n: 5 for n in CRITERIA} | {"lens_fit": 0}))
