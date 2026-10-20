@@ -70,13 +70,18 @@ def test_spec_template_has_the_sections_spec_9_requires():
 
 def test_spec_template_sets_up_the_repo_like_spec_10():
     text = template("SPEC")
-    assert "`CLAUDE.md`, `AGENTS.md` and `GEMINI.md`: one line each, \"Read SPEC.md first.\"" in text
+    assert "`AGENTS.md`: the one instruction file for every agent" in text
+    assert "read `SPEC.md`, then `HANDOFF.md`, then start work" in text
+    assert "`CLAUDE.md` and `GEMINI.md`: shims that import `AGENTS.md` and add nothing" in text
     assert "Rahul M Shah" in text
     repo_setup = text.split("## 11. Repo setup", 1)[1].split("## 12.", 1)[0]
     assert "RTK is required for every agent session" in repo_setup
     assert "rtk init" in repo_setup
     assert "`HANDOFF.md` at the root, updated and committed at the end of every agent session" in repo_setup
     assert "Every session starts by reading it after `SPEC.md`." in repo_setup
+    shim = repo_setup.split("```markdown", 1)[1].split("```", 1)[0]
+    assert "@AGENTS.md" in shim
+    assert shim.replace("\n  ", "\n").strip() == (ROOT / "CLAUDE.md").read_text().strip()
 
 
 def test_readme_template_has_what_spec_9_requires():
