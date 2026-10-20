@@ -7,7 +7,9 @@ A scan file (data/scans/<week>.json) must match schemas/scan.json, and a
 selected file (data/scans/<week>.selected.json) schemas/selected.json; every
 item in either must match schemas/scan_item.json. The kind comes from the file
 name (selected.json or *.selected.json is a selected file) unless --kind is
-given. Every error is printed and the exit code is 1.
+given. Ids in a selected file are also unique across sources, because the
+briefs and ideas that follow key items by id alone. Every error is printed
+and the exit code is 1.
 
 scripts/scan.py and scripts/select.py call these checks before they write, and
 scripts/validate.py and scripts/render.py before they read a selected file.
@@ -93,6 +95,13 @@ def check_selected(doc, where: str = "selected") -> list[str]:
     if errors:
         return errors
     errors = item_errors(doc["items"], where)
+    sources: dict[str, list[str]] = {}
+    for item in doc["items"]:
+        if isinstance(item, dict) and isinstance(item.get("id"), str):
+            sources.setdefault(item["id"], []).append(str(item.get("source")))
+    for item_id, found in sources.items():
+        if len(set(found)) > 1:
+            errors.append(f"{where}: id {item_id} is selected from more than one source ({', '.join(sorted(set(found)))})")
     if doc["scan"] != f"{doc['week']}.json":
         errors.append(f"{where}/scan: {doc['scan']} is not the scan for {doc['week']}")
     unknown = sorted({item["source"] for item in doc["items"]} - set(doc["quotas"]))

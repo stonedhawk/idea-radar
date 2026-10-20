@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/stonedhawk/idea-radar/schemas/selected.json",
   "title": "Selected file",
-  "description": "data/scans/<week>.selected.json, written by scripts/select.py (SPEC 7) and read by the judgment steps, validate.py and render.py. Each entry of items is checked separately against scan_item.json by scripts/contracts.py.",
+  "description": "data/scans/<week>.selected.json, written by scripts/select.py (SPEC 7) and read by the judgment steps, validate.py and render.py. Each entry of items is checked separately against scan_item.json by scripts/contracts.py, which also requires ids to be unique across sources (briefs and ideas key items by id alone).",
   "type": "object",
   "required": ["week", "generated_at", "scan", "quotas", "skipped", "items"],
   "additionalProperties": false,

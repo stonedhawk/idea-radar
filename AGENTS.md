@@ -30,8 +30,8 @@ Every deterministic step is a plain command run from the repo root. Each one che
 
 | Step | Command | Reads | Writes | Checked against |
 |---|---|---|---|---|
-| 1. Collect | `python scripts/scan.py [--week {week}]` (needs `GITHUB_TOKEN` or `GH_TOKEN`) | `config/sources.yaml`, `data/stars.csv`, the GitHub, HN and HF APIs | `data/scans/{week}.json`, `data/stars.csv` | `schemas/scan.json`, `schemas/scan_item.json` |
-| 2. Select | `python scripts/select.py --week {week}` (same token) | `data/scans/{week}.json`, the two previous selected files | `data/scans/{week}.selected.json` | the same, plus `schemas/selected.json` |
+| 1. Collect | `python scripts/scan.py [--week {week}]` (needs `GITHUB_TOKEN` or `GH_TOKEN`; `{week}` must be this week unless `--allow-other-week`) | `config/sources.yaml`, `data/stars.csv`, the GitHub, HN and HF APIs | `data/scans/{week}.json`, `data/stars.csv` | `schemas/scan.json`, `schemas/scan_item.json` |
+| 2. Select | `python scripts/select.py --week {week}` (same token) | `data/scans/{week}.json`, the two previous selected files | `data/scans/{week}.selected.json` | the same, plus `schemas/selected.json` and ids unique across sources |
 | Check a scan file | `python scripts/contracts.py data/scans/{week}.selected.json` | any scan or selected file | nothing | `schemas/scan.json` or `schemas/selected.json` |
 | 3. Brief | the agent, following `prompts/brief.md` | the selected file, each source | `runs/{week}/briefs.json` | `schemas/brief.json` |
 | 4. Brainstorm | the agent, following `prompts/brainstorm.md` | `briefs.json` | `runs/{week}/ideas.json` | `schemas/idea.json` |

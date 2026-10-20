@@ -44,4 +44,15 @@ jobs:
             exit 0
           fi
           git commit -m "scan: $WEEK"
-          git push
+          # main can move while the scan runs (a merged PR), and a plain push
+          # would then be rejected and the week's scan lost. Rebase and retry.
+          for attempt in 1 2 3; do
+            if git pull --rebase origin "$GITHUB_REF_NAME" && git push origin "HEAD:$GITHUB_REF_NAME"; then
+              exit 0
+            fi
+            git rebase --abort 2>/dev/null || true
+            echo "rebase or push failed (attempt $attempt of 3); trying again"
+            sleep $((attempt * 5))
+          done
+          echo "could not push the scan after 3 attempts" >&2
+          exit 1

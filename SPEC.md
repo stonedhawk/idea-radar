@@ -176,6 +176,7 @@ Exclude:
 - repos with no README
 - HF Spaces whose id or title matches the exclusion terms in `sources.yaml` (default includes `uncensored`, `nsfw`, `lora`, `deepfake`); the trending feed is noisy
 - anything selected in either of the previous two weeks
+- an item whose id was already picked from another source (a GitHub repo and an HF Space can share `owner/name`, and briefs and ideas key items by id alone); non-GitHub sources fill first, so the GitHub repo is the one skipped
 
 Rank within each source by `traction`, then fill quotas: 12 GitHub, 5 Show HN, 3 HF Spaces. Diversity cap: at most 3 items sharing a primary topic. If a source returns too few items, give its quota to GitHub.
 
