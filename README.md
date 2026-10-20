@@ -1,10 +1,34 @@
 # idea-radar
 
+[![test](https://github.com/stonedhawk/idea-radar/actions/workflows/test.yml/badge.svg)](https://github.com/stonedhawk/idea-radar/actions/workflows/test.yml)
+![Python 3.12](https://img.shields.io/badge/python-3.12-blue)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 Every Monday: what is gaining traction in developer and AI tools, turned into tool ideas for game and AI product teams.
 
 ![Demo: the real 2026-W43 digest from Google Drive, scrolling from the shortlisted ideas and their score tables down to the source briefs](docs/demo.gif)
 
 <!-- Recorded from Drive Build Lab/02_Briefs/2026-W43/_digest.md, written by the 2026-10-19 weekly run, rendered as Markdown and scrolled top to bottom. Re-record it if the digest layout changes; audit check 8. -->
+
+It is not a cloner. It reads what developers are starring and launching this week, pulls out the pattern underneath each tool, and asks where that pattern lands for game producers, LiveOps teams, monetization designers and AI product managers. Every idea it keeps has to survive a GitHub and web search for anything that already does it.
+
+## What you get every Monday
+
+The shortlist from the real 2026-W43 run (20 selected items, 16 briefs, 7 ideas, 0 killed by the originality gate):
+
+| Score | Idea | For | Originality |
+|---|---|---|---|
+| 85 | **Event pacing feel simulator.** Plays out a LiveOps event day by day for a chosen player type, labelling every number as measured from past events, derived or projected. | LiveOps producers planning event duration and reward pacing | clear |
+| 83 | **Remote config change drafter.** An agent that snapshots a game's remote config, proposes event changes key by key, asks before each risky one and writes a one line rollback. | LiveOps producers pushing weekly event changes | differentiated |
+| 81 | **Economy change quiz gate.** Before an economy sheet change ships, quizzes the designer on its effect (days to earn an item for a non payer) and checks the answer with a script. | Economy designers changing reward and price tables | differentiated |
+
+Each shortlisted idea in the digest carries its source and the move that produced it, the exact GitHub and web searches behind its originality verdict with their evidence links, the smallest version worth building, a 10-second demo, how every claim will be tested, and a score table with a reason for each of the six criteria.
+
+What sets it apart from a trend feed:
+
+- **Originality is checked, not assumed.** Two GitHub searches and two web searches per idea, recorded in the output. An idea that a maintained project already covers is killed and archived with the reason.
+- **The arithmetic is recomputed.** `scripts/validate.py` recomputes every score total and cap, and nothing is rendered or published unless it passes.
+- **Nothing ships unaudited.** A picked idea becomes a spec, a target README and a launch plan, and it only ships after an 11-check audit gate: every README claim traced to a file, maths checked against worked examples, data flows listed, no secrets in history.
 
 ## Quickstart
 
@@ -21,6 +45,17 @@ That writes this week's scan to `data/scans/<week>.json` and adds GitHub star co
 To run it every week, enable Actions on your fork (GitHub does not run workflows in a new fork until you do) and set up the weekly Claude task from [SPEC.md, Appendix A](SPEC.md#appendix-a-weekly-claude-task-prompt), pointed at your fork, or another agent (see [Running with another agent](#running-with-another-agent)).
 
 ## How the stages work
+
+```mermaid
+flowchart LR
+  A[Collect<br/>GitHub, Show HN, HF Spaces] --> B[Select<br/>20 items]
+  B --> C[Brief<br/>the pattern underneath]
+  C --> D[Brainstorm<br/>ideas for game and AI product teams]
+  D --> E[Originality gate<br/>GitHub and web search]
+  E --> F[Score<br/>against the rubric]
+  F --> G[Validate and render]
+  G --> H[Digest in Google Drive]
+```
 
 1. **Collect** (GitHub Actions, Monday 01:30 UTC). [`scripts/scan.py`](scripts/scan.py) searches GitHub by the topics in [`config/sources.yaml`](config/sources.yaml), reads Show HN posts from the last 7 days through the Hacker News search API, and reads the Hugging Face Spaces trending list. GitHub traction is stars gained per 7 days, measured from a star snapshot 5 to 10 days old, or estimated from lifetime stars over age when there is none.
 2. **Select** (same workflow). [`scripts/select.py`](scripts/select.py) drops forks, archived repos, repos with no README, lists and tutorials, the HF Space terms in the config, and anything picked in the previous two weeks, then fills 12 GitHub, 5 Show HN and 3 HF Space slots with at most 3 items per primary topic. The workflow commits both files.
