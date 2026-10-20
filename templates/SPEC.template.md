@@ -74,7 +74,17 @@ Verification method from the idea: {{verifiable_by}}
 
 ## 11. Repo setup
 
-- `CLAUDE.md`, `AGENTS.md` and `GEMINI.md`: one line each, "Read SPEC.md first."
+- `AGENTS.md`: the one instruction file for every agent. Codex reads it directly, Claude Code reads it through `CLAUDE.md`, and Gemini CLI and Antigravity through `GEMINI.md`. It opens with the start order: read `SPEC.md`, then `HANDOFF.md`, then start work. Its working rules carry the RTK requirement below. Edit it, never the shims.
+- `CLAUDE.md` and `GEMINI.md`: shims that import `AGENTS.md` and add nothing. `CLAUDE.md` is exactly this, and `GEMINI.md` is the same with "Shim for Gemini CLI and Antigravity.":
+
+  ```markdown
+  # CLAUDE.md
+
+  Shim for Claude Code. Every instruction for this repo is in AGENTS.md, so read it before anything else. Do not add instructions here.
+
+  @AGENTS.md
+  ```
+
 - `HANDOFF.md` at the root, updated and committed at the end of every agent session: what was done, what is in progress, known issues, the exact next step. Every session starts by reading it after `SPEC.md`.
 - RTK is required for every agent session in this repo. `AGENTS.md` says so in its working rules: install it with `brew install rtk` (other platforms: https://github.com/rtk-ai/rtk#installation), set up the hook once per machine with `rtk init` and the flag for your agent (`rtk init -g` for Claude Code, `rtk init -g --codex` for Codex, `rtk init -g --gemini` for Gemini CLI, `rtk init --agent antigravity` run inside the repo for Antigravity, which writes `.agents/rules/antigravity-rtk-rules.md` to commit with the repo), and check it with `rtk gain`. Where no hook is active, prefix shell commands with `rtk` (`rtk pytest`, `rtk git status`). RTK is a development tool only: it is not a runtime dependency and CI does not use it.
 - `LICENSE`: MIT, "Copyright (c) {{year}} Rahul M Shah"
