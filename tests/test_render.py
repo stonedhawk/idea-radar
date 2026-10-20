@@ -175,3 +175,61 @@ def test_colliding_slugs_get_distinct_files(tmp_path, selected):
         "acme-agent-1-2.md",
         "acme-agent-1.md",
     ]
+
+
+# Review fixes (2026-10-20): dashes in copied URLs, computed totals, stale scan rows
+
+
+def copy_run(tmp_path):
+    run = tmp_path / "run"
+    run.mkdir()
+    for name in ("briefs", "ideas", "scores"):
+        (run / f"{name}.json").write_text((RUN / f"{name}.json").read_text())
+    return run
+
+
+def test_dashes_in_copied_urls_are_percent_encoded(tmp_path, selected):
+    from scripts.validate import validate_run
+
+    run = copy_run(tmp_path)
+    briefs = json.loads((run / "briefs.json").read_text())
+    briefs["briefs"][0]["evidence"].append("https://en.wikipedia.org/wiki/Free\u2013to\u2013play")
+    dashed = "https://huggingface.co/spaces/org/level\u2014designer"
+    briefs["briefs"][2]["url"] = dashed
+    (run / "briefs.json").write_text(json.dumps(briefs))
+    selected["items"][2]["url"] = dashed
+    # validate.py exempts copied fields from the dash rule, so render must cope.
+    assert validate_run(run, selected, load_rubric())[0] == []
+
+    out = tmp_path / "drive"
+    assert render_run(run, selected, load_rubric(), out) == []
+    brief = (out / "briefs" / "acme-agent-1.md").read_text()
+    assert "- https://en.wikipedia.org/wiki/Free%E2%80%93to%E2%80%93play" in brief
+    encoded = "https://huggingface.co/spaces/org/level%E2%80%94designer"
+    assert f"Source: hf_space, {encoded}" in (out / "briefs" / "hf-org-level-designer.md").read_text()
+    assert f"[Level Designer]({encoded})" in (out / "_digest.md").read_text()
+    scan = json.loads((out / "scan_rows.json").read_text())
+    assert scan[3][3] == encoded  # the same URL, not a hyphenated one
+
+
+def test_backlog_and_digest_use_the_computed_total(tmp_path, selected):
+    run = copy_run(tmp_path)
+    scores = json.loads((run / "scores.json").read_text())
+    planner = next(s for s in scores["scores"] if s["idea_id"] == "2026-W42-02")
+    planner["total"] = 84.995  # inside validate's tolerance; the criteria give 85
+    (run / "scores.json").write_text(json.dumps(scores))
+    out = tmp_path / "drive"
+    assert render_run(run, selected, load_rubric(), out) == []
+    rows = json.loads((out / "backlog_rows.json").read_text())
+    col = {name: i for i, name in enumerate(BACKLOG_COLUMNS)}
+    assert [r[col["total"]] for r in rows if r[col["idea_id"]] == "2026-W42-02"] == [85]
+    assert "### 2. Experiment ticket planner (85)" in (out / "_digest.md").read_text()
+
+
+def test_render_without_selected_removes_stale_scan_rows(tmp_path, selected):
+    out = tmp_path / "drive"
+    assert render_run(RUN, selected, load_rubric(), out) == []
+    assert (out / "scan_rows.json").exists()
+    assert render_run(RUN, None, load_rubric(), out) == []
+    assert not (out / "scan_rows.json").exists()
+    assert (out / "_digest.md").exists()

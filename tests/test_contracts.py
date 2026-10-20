@@ -188,3 +188,13 @@ def test_validate_refuses_a_selected_file_that_breaks_the_contract(tmp_path, sel
 def test_select_says_to_run_the_scan_first(config, tmp_path):
     with pytest.raises(ContractError, match="missing; run scripts/scan.py first"):
         select_step.run(config, week=WEEK, data_dir=tmp_path, has_readme=lambda name: True, now=NOW)
+
+
+def test_selected_ids_are_unique_across_sources(selected):
+    # A GitHub repo and an HF Space can share owner/name; briefs and ideas key by id.
+    twin = copy.deepcopy(selected["items"][0])
+    twin.update(id="org/level-designer", url="https://github.com/org/level-designer")
+    selected["items"].append(twin)
+    assert check_selected(selected, "s") == [
+        "s: id org/level-designer is selected from more than one source (github, hf_space)"
+    ]

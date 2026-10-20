@@ -125,3 +125,40 @@ def test_select_cli_end_to_end(tmp_path):
     out = json.loads((scans / f"{WEEK}.selected.json").read_text())
     assert len(out["items"]) == 20
     assert out["skipped"]["no_readme"] == 1
+
+
+# Only this week: a past week would get today's date on its star rows and lose its snapshots
+
+
+@pytest.fixture
+def scan_calls(monkeypatch):
+    import scripts.scan as scan_step
+
+    calls = []
+
+    def fake_run(cfg, *, week, now, data_dir, token):
+        calls.append(week)
+        return {"items": [], "counts": {}}
+
+    monkeypatch.setattr(scan_step, "run", fake_run)
+    monkeypatch.setenv("GITHUB_TOKEN", "t")
+    return calls
+
+
+def test_scan_refuses_a_week_that_is_not_this_week(scan_calls, capsys):
+    from scripts.scan import main
+
+    with pytest.raises(SystemExit) as exc:
+        main(["--week", "2026-W40"])
+    assert exc.value.code == 2
+    assert scan_calls == []
+    assert "--allow-other-week" in capsys.readouterr().err
+
+
+def test_scan_runs_this_week_and_other_weeks_only_on_request(scan_calls):
+    from scripts.scan import main
+
+    this_week = iso_week(datetime.now(timezone.utc).date())
+    assert main(["--week", this_week]) == 0
+    assert main(["--week", "2026-W40", "--allow-other-week"]) == 0
+    assert scan_calls == [this_week, "2026-W40"]

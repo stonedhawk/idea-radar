@@ -246,3 +246,16 @@ def test_repeat_rule_matches_source_and_id(tmp_path, items, config):
 
 def test_missing_previous_weeks_are_fine(tmp_path):
     assert recently_selected(tmp_path, "2026-W42", 2) == set()
+
+
+# One id per selection (briefs and ideas key items by id alone)
+
+
+def test_an_id_already_picked_from_another_source_is_skipped(items, config):
+    space = by_id(items, "multimodalart/jev-decision-index")
+    twin = copy.deepcopy(by_id(items, "acme/agent-1"))
+    twin.update(id=space["id"], url=f"https://github.com/{space['id']}", title="jev-decision-index", traction=10.0**6)
+    selected, skipped = run([*items, twin], config)
+    assert [(it["source"], it["id"]) for it in selected if it["id"] == space["id"]] == [("hf_space", space["id"])]
+    assert skipped["duplicate_id"] == 1
+    assert len(selected) == sum(config["select"]["quotas"].values())
