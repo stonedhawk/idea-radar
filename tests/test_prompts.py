@@ -68,6 +68,7 @@ REQUIRED_RULES = {
         "The About line is 200 characters or less",
         "No source code was copied from the source repo",
         "Do not share any file or folder",
+        "keeps the RTK and `HANDOFF.md` requirements from the template, unchanged",
         "No em dashes or en dashes",
     ],
 }
