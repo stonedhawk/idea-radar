@@ -2,9 +2,9 @@
 
 Every Monday: what is gaining traction in developer and AI tools, turned into tool ideas for game and AI product teams.
 
-![Demo: a weekly digest in Google Drive, from the shortlisted ideas with their scores down to the source briefs](docs/demo.gif)
+![Demo: the real 2026-W43 digest from Google Drive, scrolling from the shortlisted ideas and their score tables down to the source briefs](docs/demo.gif)
 
-<!-- GIF placeholder. Record it from the real digest of Monday 2026-10-19 before launch; audit check 8. -->
+<!-- Recorded from Drive Build Lab/02_Briefs/2026-W43/_digest.md, written by the 2026-10-19 weekly run, rendered as Markdown and scrolled top to bottom. Re-record it if the digest layout changes; audit check 8. -->
 
 ## Quickstart
 
