@@ -75,6 +75,8 @@ def test_spec_template_sets_up_the_repo_like_spec_10():
     repo_setup = text.split("## 11. Repo setup", 1)[1].split("## 12.", 1)[0]
     assert "RTK is required for every agent session" in repo_setup
     assert "rtk init" in repo_setup
+    assert "`HANDOFF.md` at the root, updated and committed at the end of every agent session" in repo_setup
+    assert "Every session starts by reading it after `SPEC.md`." in repo_setup
 
 
 def test_readme_template_has_what_spec_9_requires():
